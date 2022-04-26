@@ -47,7 +47,7 @@ class CosmeticFiltersResourceDownloader {
   private var downloadTask: AnyCancellable?
 
   static let endpoint = { () -> String in
-    if !AppConstants.buildChannel.isPublic {
+    if AppConstants.buildChannel.isPublic {
       return "https://adblock-data-staging.s3.bravesoftware.com/ios"
     }
     return "https://adblock-data.s3.brave.com/ios"

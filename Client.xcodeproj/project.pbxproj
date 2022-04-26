@@ -1060,6 +1060,11 @@
 		CA03923A271E2CB2000EB13C /* BrowserViewController+Widgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA039239271E2CB2000EB13C /* BrowserViewController+Widgets.swift */; };
 		CA03923B271E3238000EB13C /* BraveWidgets.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = CA0391E5271E1382000EB13C /* BraveWidgets.intentdefinition */; };
 		CA04E8A627022D9D00BFBB4D /* PlaylistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA04E8A527022D9D00BFBB4D /* PlaylistTests.swift */; };
+		CA05F3C3281ADD8B0054DCBA /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3C2281ADD8B0054DCBA /* Utils.swift */; };
+		CA05F3CF281ADE380054DCBA /* ASN1Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3CE281ADE380054DCBA /* ASN1Parser.swift */; };
+		CA05F3D1281ADEFA0054DCBA /* WebStorePrivateAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3D0281ADEFA0054DCBA /* WebStorePrivateAPI.swift */; };
+		CA05F3D5281ADF550054DCBA /* crx3.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3D3281ADF550054DCBA /* crx3.pb.swift */; };
+		CA05F3D9281AE0670054DCBA /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CA05F3D8281AE0670054DCBA /* SwiftProtobuf */; };
 		CA0EE168273C220800F269DA /* WelcomeBraveBlockedAdsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0EE167273C220800F269DA /* WelcomeBraveBlockedAdsController.swift */; };
 		CA0EE175273C248C00F269DA /* OnboardingPulseAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0EE174273C248C00F269DA /* OnboardingPulseAnimationView.swift */; };
 		CA0EE177273C402900F269DA /* WelcomeNTPOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0EE176273C402900F269DA /* WelcomeNTPOnboardingView.swift */; };
@@ -1104,6 +1109,15 @@
 		CA225DF62795D1A80024C104 /* MainFrameAtDocumentStartSandboxed.js in Resources */ = {isa = PBXBuildFile; fileRef = CA225DF42795D1A70024C104 /* MainFrameAtDocumentStartSandboxed.js */; };
 		CA225DF72795D1A80024C104 /* MainFrameAtDocumentEndSandboxed.js in Resources */ = {isa = PBXBuildFile; fileRef = CA225DF52795D1A80024C104 /* MainFrameAtDocumentEndSandboxed.js */; };
 		CA225DF92795D7690024C104 /* WKContentWorld+Sandbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA225DF82795D7690024C104 /* WKContentWorld+Sandbox.swift */; };
+		CA2358F42816E32E009FCC9E /* WebStorePrivateAPI.js in Resources */ = {isa = PBXBuildFile; fileRef = CA2358F32816E32E009FCC9E /* WebStorePrivateAPI.js */; };
+		CA2358F828173BE4009FCC9E /* WebStorePrivateAPIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2358F728173BE4009FCC9E /* WebStorePrivateAPIHelper.swift */; };
+		CA2359042817475F009FCC9E /* CRXFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2359032817475F009FCC9E /* CRXFile.swift */; };
+		CA23590628174CE2009FCC9E /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA23590528174CE2009FCC9E /* AnyCodable.swift */; };
+		CA23590A281780C6009FCC9E /* WebStoreInstallUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA235909281780C6009FCC9E /* WebStoreInstallUI.swift */; };
+		CA23590C281784F1009FCC9E /* AsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA23590B281784F1009FCC9E /* AsyncImage.swift */; };
+		CA23593E28186C1E009FCC9E /* SandboxUnpacker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA23593D28186C1E009FCC9E /* SandboxUnpacker.swift */; };
+		CA23594A28186CCF009FCC9E /* CrxInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA23594928186CCF009FCC9E /* CrxInstaller.swift */; };
+		CA23594C2818805B009FCC9E /* CRXVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA23594B2818805B009FCC9E /* CRXVerifier.swift */; };
 		CA29F2F3273DAEA100C391C3 /* PlaylistOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA29F2F2273DAEA100C391C3 /* PlaylistOnboardingView.swift */; };
 		CA2CA1B127F4B50300B25646 /* ReadyState.js in Resources */ = {isa = PBXBuildFile; fileRef = CA2CA1B027F4B50300B25646 /* ReadyState.js */; };
 		CA2CA1CF27F4B93400B25646 /* ReadyStateScriptHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2CA1CE27F4B93400B25646 /* ReadyStateScriptHelper.swift */; };
@@ -3097,6 +3111,11 @@
 		CA039237271E2B11000EB13C /* BrowserNavigationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserNavigationHelper.swift; sourceTree = "<group>"; };
 		CA039239271E2CB2000EB13C /* BrowserViewController+Widgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowserViewController+Widgets.swift"; sourceTree = "<group>"; };
 		CA04E8A527022D9D00BFBB4D /* PlaylistTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTests.swift; sourceTree = "<group>"; };
+		CA05F3C2281ADD8B0054DCBA /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		CA05F3CE281ADE380054DCBA /* ASN1Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASN1Parser.swift; sourceTree = "<group>"; };
+		CA05F3D0281ADEFA0054DCBA /* WebStorePrivateAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebStorePrivateAPI.swift; sourceTree = "<group>"; };
+		CA05F3D3281ADF550054DCBA /* crx3.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = crx3.pb.swift; sourceTree = "<group>"; };
+		CA05F3D4281ADF550054DCBA /* crx3.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = crx3.proto; sourceTree = "<group>"; };
 		CA0EE167273C220800F269DA /* WelcomeBraveBlockedAdsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBraveBlockedAdsController.swift; sourceTree = "<group>"; };
 		CA0EE174273C248C00F269DA /* OnboardingPulseAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPulseAnimationView.swift; sourceTree = "<group>"; };
 		CA0EE176273C402900F269DA /* WelcomeNTPOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeNTPOnboardingView.swift; sourceTree = "<group>"; };
@@ -3128,6 +3147,15 @@
 		CA225DF42795D1A70024C104 /* MainFrameAtDocumentStartSandboxed.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MainFrameAtDocumentStartSandboxed.js; sourceTree = "<group>"; };
 		CA225DF52795D1A80024C104 /* MainFrameAtDocumentEndSandboxed.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MainFrameAtDocumentEndSandboxed.js; sourceTree = "<group>"; };
 		CA225DF82795D7690024C104 /* WKContentWorld+Sandbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKContentWorld+Sandbox.swift"; sourceTree = "<group>"; };
+		CA2358F32816E32E009FCC9E /* WebStorePrivateAPI.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = WebStorePrivateAPI.js; sourceTree = "<group>"; };
+		CA2358F728173BE4009FCC9E /* WebStorePrivateAPIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebStorePrivateAPIHelper.swift; sourceTree = "<group>"; };
+		CA2359032817475F009FCC9E /* CRXFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRXFile.swift; sourceTree = "<group>"; };
+		CA23590528174CE2009FCC9E /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCodable.swift; sourceTree = "<group>"; };
+		CA235909281780C6009FCC9E /* WebStoreInstallUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebStoreInstallUI.swift; sourceTree = "<group>"; };
+		CA23590B281784F1009FCC9E /* AsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncImage.swift; sourceTree = "<group>"; };
+		CA23593D28186C1E009FCC9E /* SandboxUnpacker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxUnpacker.swift; sourceTree = "<group>"; };
+		CA23594928186CCF009FCC9E /* CrxInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrxInstaller.swift; sourceTree = "<group>"; };
+		CA23594B2818805B009FCC9E /* CRXVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRXVerifier.swift; sourceTree = "<group>"; };
 		CA29F2F2273DAEA100C391C3 /* PlaylistOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistOnboardingView.swift; sourceTree = "<group>"; };
 		CA2CA1B027F4B50300B25646 /* ReadyState.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = ReadyState.js; sourceTree = "<group>"; };
 		CA2CA1CE27F4B93400B25646 /* ReadyStateScriptHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyStateScriptHelper.swift; sourceTree = "<group>"; };
@@ -3475,6 +3503,7 @@
 				E6231C051B90A472005ABB0D /* libxml2.2.tbd in Frameworks */,
 				E6231C011B90A44F005ABB0D /* libz.tbd in Frameworks */,
 				288A2D9D1AB8B3260023ABC3 /* Shared.framework in Frameworks */,
+				CA05F3D9281AE0670054DCBA /* SwiftProtobuf in Frameworks */,
 				5DE7689920B3456E00FF5533 /* BraveShared.framework in Frameworks */,
 				2FCAE2311ABB51F800877008 /* Storage.framework in Frameworks */,
 				271F683C26EBD0E400AA2A50 /* BraveWallet.framework in Frameworks */,
@@ -6145,6 +6174,24 @@
 			path = Favicons;
 			sourceTree = "<group>";
 		};
+		CA05F3D2281ADF550054DCBA /* Proto */ = {
+			isa = PBXGroup;
+			children = (
+				CA05F3D3281ADF550054DCBA /* crx3.pb.swift */,
+				CA05F3D4281ADF550054DCBA /* crx3.proto */,
+			);
+			path = Proto;
+			sourceTree = "<group>";
+		};
+		CA05F3DA281AE1D50054DCBA /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				CA23590B281784F1009FCC9E /* AsyncImage.swift */,
+				CA235909281780C6009FCC9E /* WebStoreInstallUI.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		CA1B698327303D5800F7CAC0 /* Welcome */ = {
 			isa = PBXGroup;
 			children = (
@@ -6253,6 +6300,25 @@
 				2F1273B527D67232007EE7B7 /* NightModeHelper.js */,
 			);
 			path = AtDocumentStart;
+			sourceTree = "<group>";
+		};
+		CA2358E82816E311009FCC9E /* WebExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				CA05F3DA281AE1D50054DCBA /* UI */,
+				CA05F3D2281ADF550054DCBA /* Proto */,
+				CA2358F32816E32E009FCC9E /* WebStorePrivateAPI.js */,
+				CA23590528174CE2009FCC9E /* AnyCodable.swift */,
+				CA2358F728173BE4009FCC9E /* WebStorePrivateAPIHelper.swift */,
+				CA2359032817475F009FCC9E /* CRXFile.swift */,
+				CA23593D28186C1E009FCC9E /* SandboxUnpacker.swift */,
+				CA23594928186CCF009FCC9E /* CrxInstaller.swift */,
+				CA23594B2818805B009FCC9E /* CRXVerifier.swift */,
+				CA05F3C2281ADD8B0054DCBA /* Utils.swift */,
+				CA05F3CE281ADE380054DCBA /* ASN1Parser.swift */,
+				CA05F3D0281ADEFA0054DCBA /* WebStorePrivateAPI.swift */,
+			);
+			path = WebExtensions;
 			sourceTree = "<group>";
 		};
 		CA3935A827E4F46D00D18585 /* certviewer */ = {
@@ -6480,6 +6546,7 @@
 		D3A994941A368691008AD1AC /* Browser */ = {
 			isa = PBXGroup;
 			children = (
+				CA2358E82816E311009FCC9E /* WebExtensions */,
 				CA2202A527192E22002D3582 /* Interstitial Pages */,
 				CAA7DC5D26332C4700E3910E /* Certificate Viewer */,
 				5E5E6E3825BA03360035B6A0 /* Playlist */,
@@ -7529,6 +7596,7 @@
 			);
 			name = Client;
 			packageProductDependencies = (
+				CA05F3D8281AE0670054DCBA /* SwiftProtobuf */,
 			);
 			productName = Client;
 			productReference = F84B21BE1A090F8100AAB793 /* Client.app */;
@@ -7707,6 +7775,7 @@
 				271F68EE26EBDC3600AA2A50 /* XCRemoteSwiftPackageReference "Then" */,
 				277309DA2721DDD2007643F6 /* XCRemoteSwiftPackageReference "Swift-BigInt" */,
 				2710C13527CE87FF00391304 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+				CA05F3D7281AE0670054DCBA /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 			);
 			productRefGroup = F84B21BF1A090F8100AAB793 /* Products */;
 			projectDirPath = "";
@@ -8071,6 +8140,7 @@
 				5EC1DDBD2356888000CA4028 /* onboarding-rewards.json in Resources */,
 				5DE5250E218CE92C000DFAA6 /* block-images.json in Resources */,
 				CA22028D2719283F002D3582 /* GenericError.html in Resources */,
+				CA2358F42816E32E009FCC9E /* WebStorePrivateAPI.js in Resources */,
 				E4A961381AC06FA50069AD6F /* ReaderViewLoading.html in Resources */,
 				4481F23026CBD1C600658EAC /* SFSRootCAG2.cer in Resources */,
 				4481F22E26CBD1C600658EAC /* AmazonRootCA4.cer in Resources */,
@@ -8698,6 +8768,7 @@
 				2F12A176260A3B17005A8C2B /* ShortcutSettingsViewController.swift in Sources */,
 				0A1E843E2190A57F0042F782 /* SyncCodewordsView.swift in Sources */,
 				27A1AC0024855C1700344503 /* FeedCardCell.swift in Sources */,
+				CA23593E28186C1E009FCC9E /* SandboxUnpacker.swift in Sources */,
 				27829E842549FF9D007CF0B2 /* WalletTransferView.swift in Sources */,
 				278C467B23EDF0940083347F /* ShieldsSwitch.swift in Sources */,
 				27829E212548AFFE007CF0B2 /* BraveRewardsPublisherView.swift in Sources */,
@@ -8708,6 +8779,7 @@
 				440982A526658EAA00BB37FE /* BraveSearchManager.swift in Sources */,
 				27C22A9026409FF200419FC7 /* WindowProtection.swift in Sources */,
 				5E72D54F253657FF00F8D62D /* BraveCoreImportExportUtility.swift in Sources */,
+				CA23590628174CE2009FCC9E /* AnyCodable.swift in Sources */,
 				4422D4D921BFFB7600BF1855 /* merger.cc in Sources */,
 				4422D4EF21BFFB7600BF1855 /* log_reader.cc in Sources */,
 				44A7883627E351E700AA7CD0 /* PrivacyReportsManager.swift in Sources */,
@@ -8832,6 +8904,7 @@
 				4422D55321BFFB7E00BF1855 /* parse.cc in Sources */,
 				4422D4F421BFFB7600BF1855 /* version_edit.cc in Sources */,
 				EB11A1062044A90E0018F749 /* ContentBlockerHelper+TabContentScript.swift in Sources */,
+				CA05F3CF281ADE380054DCBA /* ASN1Parser.swift in Sources */,
 				2755AB8623107DBD00F0721F /* AdsMediaReporting.swift in Sources */,
 				27036EC3256718DA004EF6B6 /* PartnerCardView.swift in Sources */,
 				0A39FE9C2486604D00290ABC /* GRDSubscriberCredential.m in Sources */,
@@ -8888,6 +8961,8 @@
 				D3B6923D1B9F9444004B87A4 /* FindInPageBar.swift in Sources */,
 				2F44FC721A9E840300FD20CC /* SettingsNavigationController.swift in Sources */,
 				0AADC4D220D2A6A200FDE368 /* FavoritesHelper.swift in Sources */,
+				CA05F3D5281ADF550054DCBA /* crx3.pb.swift in Sources */,
+				CA05F3C3281ADD8B0054DCBA /* Utils.swift in Sources */,
 				5E34781022D7A1D200B0D5F8 /* ResourceDownloadManager.swift in Sources */,
 				CA57F9D927AA4AAF000C8242 /* PlaylistNewFolderView.swift in Sources */,
 				C690C2142130121E00E6EEE9 /* WebImageCacheManager.swift in Sources */,
@@ -8932,6 +9007,7 @@
 				2FF0EDB325BA19E9004B18E2 /* SearchQuickEnginesViewController.swift in Sources */,
 				F4BDB56327184F6E00966291 /* Bookmarkv2.swift in Sources */,
 				0A5CBD3423D4677100362CC8 /* NTPLearnMoreViewController.swift in Sources */,
+				CA2358F828173BE4009FCC9E /* WebStorePrivateAPIHelper.swift in Sources */,
 				F35B8D2F1D638408008E3D61 /* SessionRestoreHandler.swift in Sources */,
 				4457123226BAB1D200B60C1A /* BraveTalkOptInSuccessViewController.swift in Sources */,
 				44C42CF6268378B1009572D7 /* BrowserIntents.intentdefinition in Sources */,
@@ -9021,6 +9097,7 @@
 				27036EA325671817004EF6B6 /* FeedCardFooterButton.swift in Sources */,
 				0AADC4D520D2A6A200FDE368 /* PreloadedFavorites.swift in Sources */,
 				0AC77602242A6AE000139377 /* BuyVPNView.swift in Sources */,
+				CA23590C281784F1009FCC9E /* AsyncImage.swift in Sources */,
 				2F45B40A263AF1C20033A594 /* BrowserViewController+ToolbarDelegate.swift in Sources */,
 				278C467823EDF0060083347F /* SimpleShieldsView.swift in Sources */,
 				CA2202A927192E46002D3582 /* CertificateErrorPageHandler.swift in Sources */,
@@ -9134,6 +9211,7 @@
 				2FD0E3D62577F327000C773B /* SearchSuggestionCell.swift in Sources */,
 				0A4BEFD8221EE78E0005551A /* CachedNetworkResource.swift in Sources */,
 				0A1E84412190A57F0042F782 /* SyncViewController.swift in Sources */,
+				CA05F3D1281ADEFA0054DCBA /* WebStorePrivateAPI.swift in Sources */,
 				27A1ABF62485568700344503 /* FlexibleSpaceSectionProvider.swift in Sources */,
 				279CC2D8260CF37C009B3895 /* BrowserViewController+Menu.swift in Sources */,
 				2703BE8B24F4508E00CBE6CD /* CreatePDFActivity.swift in Sources */,
@@ -9144,6 +9222,7 @@
 				2FD155BE27B2F87000D383E7 /* PasswordStoreStateObserver.swift in Sources */,
 				D863C8F21F68BFC20058D95F /* GradientProgressBar.swift in Sources */,
 				CAFC6C9927D011C200F9CACC /* CosmeticFiltersResourceDownloader.swift in Sources */,
+				CA23594C2818805B009FCC9E /* CRXVerifier.swift in Sources */,
 				0AF6B1E824A0EDC1005417FC /* InstallVPNViewController.swift in Sources */,
 				E4A961181AC041C40069AD6F /* ReadabilityService.swift in Sources */,
 				0A55E544243744DC0069F06A /* BraveVPN.swift in Sources */,
@@ -9154,6 +9233,7 @@
 				2755EA9C2551F94B0033C43F /* RewardsInternalsAutoContributeController.swift in Sources */,
 				2F676F6F260BA1B00048A1DB /* BlockingSummaryDataSource.swift in Sources */,
 				27CFB71424E1F67B008DFC8C /* Observable.swift in Sources */,
+				CA23594A28186CCF009FCC9E /* CrxInstaller.swift in Sources */,
 				CA8D5C1A26D7CE46009BF13D /* PlaylistViewController.swift in Sources */,
 				A134B88A20DA98BB00A581D0 /* ClientPreferences.swift in Sources */,
 				D3BE7B261B054D4400641031 /* main.swift in Sources */,
@@ -9176,6 +9256,7 @@
 				4422D50021BFFB7600BF1855 /* db_iter.cc in Sources */,
 				CAD0D5D927C007CC001071AC /* PlaylistEditFolderView.swift in Sources */,
 				27B68E9425C8911D002D0826 /* BraveNewsAddSourceViewController.swift in Sources */,
+				CA23590A281780C6009FCC9E /* WebStoreInstallUI.swift in Sources */,
 				D0625C98208E87F10081F3B2 /* DownloadQueue.swift in Sources */,
 				4422D54621BFFB7E00BF1855 /* rune.cc in Sources */,
 				CAC5342927A9B87600013056 /* PlaylistFolderController.swift in Sources */,
@@ -9227,6 +9308,7 @@
 				C8F457AA1F1FDD9B000CB895 /* BrowserViewController+KeyCommands.swift in Sources */,
 				E40FAB0C1A7ABB77009CB80D /* WebServer.swift in Sources */,
 				4422D54C21BFFB7E00BF1855 /* strutil.cc in Sources */,
+				CA2359042817475F009FCC9E /* CRXFile.swift in Sources */,
 				CA039238271E2B11000EB13C /* BrowserNavigationHelper.swift in Sources */,
 				CA0EE177273C402900F269DA /* WelcomeNTPOnboardingView.swift in Sources */,
 				CA8D5C1C26D7CF04009BF13D /* PlaylistCarplayManager.swift in Sources */,
@@ -15530,6 +15612,14 @@
 				minimumVersion = 0.0.2;
 			};
 		};
+		CA05F3D7281AE0670054DCBA /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -15617,6 +15707,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2FCE87D3264195EC00B98D7E /* XCRemoteSwiftPackageReference "swift-collections" */;
 			productName = OrderedCollections;
+		};
+		CA05F3D8281AE0670054DCBA /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA05F3D7281AE0670054DCBA /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
 		};
 /* End XCSwiftPackageProductDependency section */
 

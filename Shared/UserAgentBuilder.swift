@@ -29,6 +29,8 @@ public struct UserAgentBuilder {
   ///
   /// - returns: A proper user agent to use in WKWebView and url requests.
   public func build(desktopMode: Bool) -> String {
+    
+    return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36"
 
     if desktopMode { return desktopUA }
 

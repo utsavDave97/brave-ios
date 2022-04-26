@@ -349,6 +349,31 @@ class UserScriptManager {
       forMainFrameOnly: true,
       in: .page)
   }()
+  
+  private let WebStorePrivateAPI: WKUserScript? = {
+    guard let path = Bundle.main.path(forResource: "WebStorePrivateAPI", ofType: "js"), let source = try? String(contentsOfFile: path) else {
+      log.error("Failed to load WebStorePrivateAPI.js")
+      return nil
+    }
+    
+    var alteredSource = source
+    let token = UserScriptManager.securityTokenString
+
+    let replacements = [
+      "$<security_token>": token,
+      "$<handler>": "webStorePrivateAPIHelper_\(messageHandlerTokenString)",
+    ]
+
+    replacements.forEach({
+      alteredSource = alteredSource.replacingOccurrences(of: $0.key, with: $0.value, options: .literal)
+    })
+    
+    return WKUserScript.create(
+      source: alteredSource,
+      injectionTime: .atDocumentStart,
+      forMainFrameOnly: true,
+      in: .page)
+  }()
 
   private let walletProviderScript: WKUserScript? = {
     guard let path = Bundle.main.path(forResource: "WalletEthereumProvider", ofType: "js"),
@@ -413,6 +438,10 @@ class UserScriptManager {
       }
       
       if let script = ReadyStateScript {
+        $0.addUserScript(script)
+      }
+      
+      if let script = WebStorePrivateAPI {
         $0.addUserScript(script)
       }
 

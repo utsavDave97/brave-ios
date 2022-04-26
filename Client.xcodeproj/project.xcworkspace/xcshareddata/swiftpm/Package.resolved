@@ -110,6 +110,15 @@
         }
       },
       {
+        "package": "SwiftProtobuf",
+        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
+        "state": {
+          "branch": null,
+          "revision": "e1499bc69b9040b29184f7f2996f7bab467c1639",
+          "version": "1.19.0"
+        }
+      },
+      {
         "package": "SwiftKeychainWrapper",
         "repositoryURL": "https://github.com/jrendel/SwiftKeychainWrapper",
         "state": {
