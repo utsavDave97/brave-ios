@@ -47,6 +47,10 @@ enum VerifierResult {
   case requiredProofMissing
 }
 
+/// Verifies the CRX3 Format
+/// This could be done with Brave-Core
+/// However, tests show the BraveCore code is thousands of times slower
+/// This code runs in 2ms, BraveCore version runs in 3 minutes
 class CRXVerifier {
   private class SignatureVerifierSHA256 {
     private let key: SecKey

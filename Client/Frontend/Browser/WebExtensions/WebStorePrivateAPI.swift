@@ -50,14 +50,23 @@ enum WebStoreExtensionInstallStatus: String {
 }
 
 class WebStorePrivateAPI {
-  func beginIntallWithManifest3() -> Future<WebStoreResult, Never> {
+  func beginIntallWithManifest3(details: WebExtensionDetails) -> Future<WebStoreResult, Never> {
     return Future { resolver in
       if !CRXFile.IDUtil.isValidId(id: "ID") {
         resolver(.success(.invalidId))
         return
       }
       
+      if URL(string: details.iconUrl) == nil {
+        resolver(.success(.invalidIconUrl))
+        return
+      }
       
+      if ExtensionRegistry.shared.isInstalled(extensionId: details.id) ||
+          ExtensionInstallTracker.shared.isActivelyBeingInstalled(extensionId: details.id) {
+        resolver(.success(.alreadyInstalled))
+        return
+      }
     }
   }
 }

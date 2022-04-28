@@ -1065,6 +1065,9 @@
 		CA05F3D1281ADEFA0054DCBA /* WebStorePrivateAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3D0281ADEFA0054DCBA /* WebStorePrivateAPI.swift */; };
 		CA05F3D5281ADF550054DCBA /* crx3.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3D3281ADF550054DCBA /* crx3.pb.swift */; };
 		CA05F3D9281AE0670054DCBA /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CA05F3D8281AE0670054DCBA /* SwiftProtobuf */; };
+		CA05F3E8281AE49E0054DCBA /* Manifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3E7281AE49E0054DCBA /* Manifest.swift */; };
+		CA05F3F4281AE7C00054DCBA /* ExtensionRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3F3281AE7C00054DCBA /* ExtensionRegistry.swift */; };
+		CA05F3F6281AE9BD0054DCBA /* WebStoreInstallHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA05F3F5281AE9BD0054DCBA /* WebStoreInstallHelper.swift */; };
 		CA0EE168273C220800F269DA /* WelcomeBraveBlockedAdsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0EE167273C220800F269DA /* WelcomeBraveBlockedAdsController.swift */; };
 		CA0EE175273C248C00F269DA /* OnboardingPulseAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0EE174273C248C00F269DA /* OnboardingPulseAnimationView.swift */; };
 		CA0EE177273C402900F269DA /* WelcomeNTPOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0EE176273C402900F269DA /* WelcomeNTPOnboardingView.swift */; };
@@ -3116,6 +3119,9 @@
 		CA05F3D0281ADEFA0054DCBA /* WebStorePrivateAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebStorePrivateAPI.swift; sourceTree = "<group>"; };
 		CA05F3D3281ADF550054DCBA /* crx3.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = crx3.pb.swift; sourceTree = "<group>"; };
 		CA05F3D4281ADF550054DCBA /* crx3.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; path = crx3.proto; sourceTree = "<group>"; };
+		CA05F3E7281AE49E0054DCBA /* Manifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Manifest.swift; sourceTree = "<group>"; };
+		CA05F3F3281AE7C00054DCBA /* ExtensionRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionRegistry.swift; sourceTree = "<group>"; };
+		CA05F3F5281AE9BD0054DCBA /* WebStoreInstallHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebStoreInstallHelper.swift; sourceTree = "<group>"; };
 		CA0EE167273C220800F269DA /* WelcomeBraveBlockedAdsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeBraveBlockedAdsController.swift; sourceTree = "<group>"; };
 		CA0EE174273C248C00F269DA /* OnboardingPulseAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPulseAnimationView.swift; sourceTree = "<group>"; };
 		CA0EE176273C402900F269DA /* WelcomeNTPOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeNTPOnboardingView.swift; sourceTree = "<group>"; };
@@ -6317,6 +6323,9 @@
 				CA05F3C2281ADD8B0054DCBA /* Utils.swift */,
 				CA05F3CE281ADE380054DCBA /* ASN1Parser.swift */,
 				CA05F3D0281ADEFA0054DCBA /* WebStorePrivateAPI.swift */,
+				CA05F3E7281AE49E0054DCBA /* Manifest.swift */,
+				CA05F3F3281AE7C00054DCBA /* ExtensionRegistry.swift */,
+				CA05F3F5281AE9BD0054DCBA /* WebStoreInstallHelper.swift */,
 			);
 			path = WebExtensions;
 			sourceTree = "<group>";
@@ -8917,6 +8926,7 @@
 				0BB5B2881AC0A2B90052877D /* SnackBar.swift in Sources */,
 				CA9A234126B97B8400923D70 /* MenuButton.swift in Sources */,
 				27A1AC0224855C1700344503 /* FeedItemView.swift in Sources */,
+				CA05F3E8281AE49E0054DCBA /* Manifest.swift in Sources */,
 				27036F9B25684F9F004EF6B6 /* AdsNotificationHandler.swift in Sources */,
 				7BEFC6801BFF68C30059C952 /* QuickActions.swift in Sources */,
 				27AE360D25E55AA200E795E5 /* MenuViewController.swift in Sources */,
@@ -9053,6 +9063,7 @@
 				4422D43621BFD29E00BF1855 /* NSFileManager+Tar.m in Sources */,
 				0A4B7AC0243F3A8100F10CF2 /* DismissableNavigationViewController.swift in Sources */,
 				0ADA01F32450894B00B21475 /* IAPObserver.swift in Sources */,
+				CA05F3F4281AE7C00054DCBA /* ExtensionRegistry.swift in Sources */,
 				39DD030D1CD53E1900BC09B3 /* HomePageHelper.swift in Sources */,
 				27254F85269366CF00204EB4 /* AdblockRustEngine.swift in Sources */,
 				C4F3B29A1CFCF93A00966259 /* ButtonToast.swift in Sources */,
@@ -9222,6 +9233,7 @@
 				2FD155BE27B2F87000D383E7 /* PasswordStoreStateObserver.swift in Sources */,
 				D863C8F21F68BFC20058D95F /* GradientProgressBar.swift in Sources */,
 				CAFC6C9927D011C200F9CACC /* CosmeticFiltersResourceDownloader.swift in Sources */,
+				CA05F3F6281AE9BD0054DCBA /* WebStoreInstallHelper.swift in Sources */,
 				CA23594C2818805B009FCC9E /* CRXVerifier.swift in Sources */,
 				0AF6B1E824A0EDC1005417FC /* InstallVPNViewController.swift in Sources */,
 				E4A961181AC041C40069AD6F /* ReadabilityService.swift in Sources */,
