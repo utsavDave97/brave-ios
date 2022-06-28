@@ -228,8 +228,8 @@ class AdblockDebugMenuTableViewController: TableViewController {
     }
 
     let cosmeticFilterNames = [
-      CosmeticFiltersResourceDownloader.CosmeticFilterType.cosmeticSample.identifier,
-      CosmeticFiltersResourceDownloader.CosmeticFilterType.resourceSample.identifier,
+      CosmeticFiltersResourceDownloader.ResourceType.generalCosmetifFilters.resourceName,
+      CosmeticFiltersResourceDownloader.ResourceType.generalScriptletResources.resourceName,
     ]
 
     var rows = [Row]()

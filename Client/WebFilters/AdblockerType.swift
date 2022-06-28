@@ -11,9 +11,56 @@ enum FileType: String {
   case dat, json
 }
 
+enum AdBlockResourceType {
+  case generalFilterRules
+  case generalContentBlockingBehaviors
+  case regionalFilterRules(locale: String)
+  case regionalContentBlockingBehaviors(locale: String)
+  
+  var fileType: FileType {
+    switch self {
+    case .generalFilterRules, .regionalFilterRules:
+      return .dat
+    case .generalContentBlockingBehaviors, .regionalContentBlockingBehaviors:
+      return .json
+    }
+  }
+  
+  /// The bucket path to the external resource
+  var externalPath: String? {
+    switch self {
+    case .generalFilterRules:
+      return "/4/rs-ABPFilterParserData.dat"
+    case .generalContentBlockingBehaviors:
+      return "/ios/latest.json"
+    case .regionalFilterRules(let locale):
+      guard let regionalName = ResourceLocale(rawValue: locale)?.resourceName(for: fileType) else {
+        return nil
+      }
+      return "/4/rs-\(regionalName).dat"
+    case .regionalContentBlockingBehaviors(let locale):
+      guard let regionalName = ResourceLocale(rawValue: locale)?.resourceName(for: fileType) else {
+        return nil
+      }
+      return "/ios/\(regionalName)-latest.json"
+    }
+  }
+  
+  /// A name under which given resource is stored locally in the app.
+  var identifier: String {
+    switch self {
+    case .generalFilterRules, .generalContentBlockingBehaviors:
+      return BlocklistName.ad.filename
+    case .regionalFilterRules(let locale), .regionalContentBlockingBehaviors(let locale):
+      return locale
+    }
+  }
+}
+
 enum AdblockerType {
   case general
   case regional(locale: String)
+  
   var associatedFiles: [FileType] { return [.json, fileForStatsLibrary] }
 
   private var fileForStatsLibrary: FileType {

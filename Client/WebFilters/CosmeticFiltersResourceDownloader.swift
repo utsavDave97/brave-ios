@@ -11,26 +11,9 @@ import BraveCore
 
 private let log = Logger.browserLogger
 
-struct CosmeticFilterModel: Codable {
-  let hideSelectors: [String]
-  let styleSelectors: [String: [String]]
-  let exceptions: [String]
-  let injectedScript: String
-  let genericHide: Bool
-  
-  enum CodingKeys: String, CodingKey {
-    case hideSelectors = "hide_selectors"
-    case styleSelectors = "style_selectors"
-    case exceptions = "exceptions"
-    case injectedScript = "injected_script"
-    case genericHide = "generichide"
-  }
-}
-
 private struct CosmeticFilterNetworkResource {
   let resource: CachedNetworkResource
-  let fileType: FileType
-  let type: CosmeticFiltersResourceDownloader.CosmeticFilterType
+  let type: CosmeticFiltersResourceDownloader.ResourceType
 }
 
 public class CosmeticFiltersResourceDownloader {
@@ -45,12 +28,15 @@ public class CosmeticFiltersResourceDownloader {
   private var engine = AdblockEngine()
   private var initialLoad: AnyCancellable?
   private var downloadTask: AnyCancellable?
-
-  static let endpoint = { () -> String in
-    if !AppConstants.buildChannel.isPublic {
-      return "https://adblock-data-staging.s3.bravesoftware.com/ios"
+  
+  /// The base s3 environment url that hosts the debouncing (and other) files.
+  /// Cannot be used as-is and must be combined with a path
+  private lazy var baseResourceURL: URL = {
+    if AppConstants.buildChannel.isPublic {
+      return URL(string: "https://adblock-data.s3.brave.com")!
+    } else {
+      return URL(string: "https://adblock-data-staging.s3.bravesoftware.com")!
     }
-    return "https://adblock-data.s3.brave.com/ios"
   }()
 
   private init(networkManager: NetworkManager = NetworkManager()) {
@@ -161,7 +147,7 @@ public class CosmeticFiltersResourceDownloader {
   }
 
   private func downloadCosmeticSamples(with engine: AdblockEngine) -> AnyPublisher<Void, Error> {
-    downloadResources(for: engine, type: .cosmeticSample)
+    downloadResources(for: engine, type: .generalCosmetifFilters)
       .receive(on: DispatchQueue.main)
       .map {
         log.debug("Downloaded Cosmetic Filters CSS Samples")
@@ -171,7 +157,7 @@ public class CosmeticFiltersResourceDownloader {
   }
 
   private func downloadResourceSamples(with engine: AdblockEngine) -> AnyPublisher<Void, Error> {
-    return downloadResources(for: engine, type: .resourceSample)
+    return downloadResources(for: engine, type: .generalScriptletResources)
       .receive(on: DispatchQueue.main)
       .map {
         log.debug("Downloaded Cosmetic Filters Scriptlets Samples")
@@ -182,61 +168,42 @@ public class CosmeticFiltersResourceDownloader {
 
   private func downloadResources(
     for engine: AdblockEngine,
-    type: CosmeticFilterType
+    type: ResourceType
   ) -> AnyPublisher<Void, Error> {
     let nm = networkManager
-    let folderName = CosmeticFiltersResourceDownloader.folderName
+    let folderName = Self.folderName
 
     // file name of which the file will be saved on disk
-    let fileName = type.identifier
+    let fileName = type.fileName
+    let etagName = [fileName, "etag"].joined(separator: ".")
+    let url = URL(string: type.filePath, relativeTo: baseResourceURL)!
+    let etag = self.fileFromDocumentsAsString(etagName, inFolder: folderName)
 
-    let completedDownloads = type.associatedFiles.compactMap({ [weak self] fileType -> AnyPublisher<CosmeticFilterNetworkResource, Error>? in
-      guard let self = self else { return nil }
+    var headers = [String: String]()
+    if let servicesKeyValue = Bundle.main.getPlistString(for: self.servicesKeyName) {
+      headers[self.servicesKeyHeaderValue] = servicesKeyValue
+    }
 
-      let fileExtension = fileType.rawValue
-      let etagExtension = fileExtension + ".etag"
+    return nm.downloadResource(
+      with: url,
+      resourceType: .cached(etag: etag),
+      checkLastServerSideModification: !AppConstants.buildChannel.isPublic,
+      customHeaders: headers)
+      .compactMap { resource in
+        if resource.data.isEmpty {
+          return nil
+        }
 
-      guard let resourceName = type.resourceName(for: fileType),
-        var url = URL(string: CosmeticFiltersResourceDownloader.endpoint)
-      else {
-        return nil
+        return CosmeticFilterNetworkResource(
+          resource: resource,
+          type: type)
       }
-
-      url.appendPathComponent(resourceName)
-      url.appendPathExtension(fileExtension)
-
-      var headers = [String: String]()
-      if let servicesKeyValue = Bundle.main.getPlistString(for: self.servicesKeyName) {
-        headers[self.servicesKeyHeaderValue] = servicesKeyValue
-      }
-
-      let etag = self.fileFromDocumentsAsString("\(fileName).\(etagExtension)", inFolder: folderName)
-
-      return nm.downloadResource(
-        with: url,
-        resourceType: .cached(etag: etag),
-        checkLastServerSideModification: !AppConstants.buildChannel.isPublic,
-        customHeaders: headers)
-        .compactMap({ resource in
-          if resource.data.isEmpty {
-            return nil
-          }
-
-          return CosmeticFilterNetworkResource(
-            resource: resource,
-            fileType: fileType,
-            type: type)
-        }).eraseToAnyPublisher()
-    })
-    
-    return Publishers.MergeMany(completedDownloads)
-      .collect()
       .subscribe(on: DispatchQueue.global(qos: .userInitiated))
-      .compactMap { resources in
-        return self.writeFilesToDisk(resources: resources, name: fileName) ? resources : nil
+      .compactMap { resource in
+        return self.writeFilesToDisk(resources: [resource], name: fileName) ? resource : nil
       }
-      .flatMap { resources in
-        self.setUpFiles(into: engine, resources: resources)
+      .flatMap { resource in
+        self.setUpFiles(into: engine, resources: [resource])
       }
       .map({ _ in () })
       .eraseToAnyPublisher()
@@ -259,7 +226,7 @@ public class CosmeticFiltersResourceDownloader {
     let folderName = CosmeticFiltersResourceDownloader.folderName
 
     resources.forEach {
-      let fileName = name + ".\($0.fileType.rawValue)"
+      let fileName = name + ".\($0.type.fileType.rawValue)"
       fileSaveCompletions.append(
         fm.writeToDiskInFolder(
           $0.resource.data, fileName: fileName,
@@ -297,17 +264,17 @@ public class CosmeticFiltersResourceDownloader {
     }
     
     let resources: [AnyPublisher<Void, Error>] = resources.compactMap({
-      switch $0.fileType {
+      switch $0.type.fileType {
       case .dat:
         return self.setDataFile(
           into: engine,
           data: $0.resource.data,
-          id: $0.type.identifier)
+          id: $0.type.resourceName)
       case .json:
         return self.setJSONFile(
           into: engine,
           data: $0.resource.data,
-          id: $0.type.identifier)
+          id: $0.type.resourceName)
       }
     })
     
@@ -373,26 +340,34 @@ public class CosmeticFiltersResourceDownloader {
 }
 
 extension CosmeticFiltersResourceDownloader {
-  enum CosmeticFilterType {
-    case cosmeticSample
-    case resourceSample
-
-    var identifier: String {
+  enum ResourceType {
+    case generalCosmetifFilters
+    case generalScriptletResources
+    
+    var fileType: FileType {
       switch self {
-      case .cosmeticSample: return "ios-cosmetic-filters"
-      case .resourceSample: return "scriptlet-resources"
+      case .generalCosmetifFilters:
+        return .dat
+      case .generalScriptletResources:
+        return .json
       }
     }
-
-    var associatedFiles: [FileType] {
+    
+    var resourceName: String {
       switch self {
-      case .cosmeticSample: return [.dat]
-      case .resourceSample: return [.json]
+      case .generalCosmetifFilters:
+        return "ios-cosmetic-filters"
+      case .generalScriptletResources:
+        return "scriptlet-resources"
       }
     }
-
-    func resourceName(for fileType: FileType) -> String? {
-      identifier
+    
+    var fileName: String {
+      return [resourceName, fileType.rawValue].joined(separator: ".")
+    }
+    
+    var filePath: String {
+      return "/ios/\(fileName)"
     }
   }
 }

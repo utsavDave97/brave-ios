@@ -8,6 +8,38 @@ import BraveCore
 
 private let log = Logger.browserLogger
 
+struct CosmeticFilterModel: Codable {
+  let hideSelectors: [String]
+  let styleSelectors: [String: [String]]
+  let exceptions: [String]
+  let injectedScript: String
+  let genericHide: Bool
+  
+  enum CodingKeys: String, CodingKey {
+    case hideSelectors = "hide_selectors"
+    case styleSelectors = "style_selectors"
+    case exceptions = "exceptions"
+    case injectedScript = "injected_script"
+    case genericHide = "generichide"
+  }
+  
+  func makeCSSRules() -> String {
+    let hideRules = hideSelectors.reduce("") { partialResult, rule in
+      return [partialResult, rule, "{display: none !important}\n"].joined()
+    }
+    
+    let styleRules = styleSelectors.reduce("") { partialResult, entry in
+      let subRules = entry.value.reduce("") { partialResult, subRule in
+        return [partialResult, subRule, ";"].joined()
+      }
+      
+      return [partialResult, entry.key, "{", subRules, " !important}\n"].joined()
+    }
+    
+    return [hideRules, styleRules].joined()
+  }
+}
+
 public class AdBlockStats: LocalAdblockResourceProtocol {
   public static let shared = AdBlockStats()
 
@@ -175,37 +207,45 @@ public class AdBlockStats: LocalAdblockResourceProtocol {
 
 extension AdBlockStats {
   func cosmeticFiltersScript(for url: URL) throws -> String? {
-    guard let rules = CosmeticFiltersResourceDownloader.shared.cssRules(for: url).data(using: .utf8) else {
-      return nil
+    var cssRules: [String] = []
+    var injectedScripts: [String] = []
+    
+    var rulesList = [
+      CosmeticFiltersResourceDownloader.shared.cssRules(for: url),
+      generalAdblockEngine.cosmeticResourcesForURL(url.absoluteString),
+    ]
+    
+    if isRegionalAdblockEnabled, let rules = regionalAdblockEngine?.cosmeticResourcesForURL(url.absoluteString) {
+      rulesList.append(rules)
     }
     
-    let model = try JSONDecoder().decode(CosmeticFilterModel.self, from: rules)
-    
-    var cssRules = ""
-    for rule in model.hideSelectors {
-      cssRules += "\(rule){display: none !important}\n"
-    }
-    
-    for (key, value) in model.styleSelectors {
-      var subRules = ""
-      for subRule in value {
-        subRules += subRule + ";"
-      }
+    for rules in rulesList {
+      guard let data = rules.data(using: .utf8) else { continue }
+      let model = try JSONDecoder().decode(CosmeticFilterModel.self, from: data)
+      cssRules.append(model.makeCSSRules())
       
-      cssRules += "\(key){" + subRules + " !important}\n"
+      if !model.injectedScript.isEmpty {
+        injectedScripts.append([
+          "(function(){",
+          model.injectedScript,
+          "})();"
+        ].joined(separator: "\n"))
+      }
     }
-
-    var injectedScript = model.injectedScript
+    
+    var injectedScript = injectedScripts.joined(separator: "\n")
 
     if !injectedScript.isEmpty, Preferences.Shields.autoRedirectAMPPages.value {
       injectedScript = [
+        "(function(){",
         /// This boolean is used by a script injected by cosmetic filters and enables that script via this boolean
         /// The script is found here: https://github.com/brave/adblock-resources/blob/master/resources/de-amp.js
         /// - Note: This script is only a smaller part (1 of 3) of de-amping:
         /// The second part is handled by an inected script that redirects amp pages to their canonical links
         /// The third part is handled by debouncing amp links and handled by debouncing rules
         "const deAmpEnabled = true;",
-        injectedScript
+        injectedScript,
+        "})();"
       ].joined(separator: "\n")
     }
     
@@ -219,7 +259,7 @@ extension AdBlockStats {
       var style = document.createElement('style');
       style.type = 'text/css';
     
-      var styles = atob("\(cssRules.toBase64())");
+      var styles = atob("\(cssRules.joined().toBase64())");
       
       if (style.styleSheet) {
         style.styleSheet.cssText = styles;
@@ -228,10 +268,7 @@ extension AdBlockStats {
       }
 
       head.appendChild(style);
-      
-      (function(){
-        \(injectedScript)
-      })();
+      \(injectedScript)
     })();
     """
   }
