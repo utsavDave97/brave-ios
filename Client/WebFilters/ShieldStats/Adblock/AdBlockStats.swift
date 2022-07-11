@@ -27,8 +27,9 @@ public class AdBlockStats: LocalAdblockResourceProtocol {
 
   fileprivate var isRegionalAdblockEnabled: Bool { return Preferences.Shields.useRegionAdBlock.value }
 
-  fileprivate init() {
-    generalAdblockEngine = AdblockEngine()
+  init(generalAdblockEngine: AdblockEngine = AdblockEngine(), regionalAdBlockEngine: AdblockEngine? = nil) {
+    self.generalAdblockEngine = generalAdblockEngine
+    self.regionalAdblockEngine = regionalAdBlockEngine
   }
 
   static let adblockSerialQueue = DispatchQueue(label: "com.brave.adblock-dispatch-queue")
