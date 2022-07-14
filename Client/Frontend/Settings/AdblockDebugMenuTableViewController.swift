@@ -8,11 +8,19 @@ import WebKit
 import Shared
 import BraveShared
 import Combine
+import BraveUI
 
 private let log = Logger.browserLogger
 
 class AdblockDebugMenuTableViewController: TableViewController {
-
+  private static var fileDateFormatter: DateFormatter {
+    return DateFormatter().then {
+      $0.dateStyle = .short
+      $0.timeStyle = .short
+      $0.timeZone = TimeZone(abbreviation: "GMT")
+    }
+  }
+  
   private let fm = FileManager.default
 
   override func viewDidLoad() {
@@ -28,6 +36,7 @@ class AdblockDebugMenuTableViewController: TableViewController {
         self.datesSection,
         self.bundledListsSection(names: listNames),
         self.downloadedListsSection(names: listNames),
+        self.downloadedResourcesSection()
       ]
     }
   }
@@ -161,10 +170,6 @@ class AdblockDebugMenuTableViewController: TableViewController {
   }
 
   private func downloadedListsSection(names: [String]) -> Section {
-    var section = Section(
-      header: "Downloaded lists",
-      footer: "Lists downloaded from the internet at app launch.")
-
     func getEtag(name: String, folder: String) -> String? {
       guard let folderUrl = fm.getOrCreateFolder(name: folder) else {
         return nil
@@ -175,12 +180,6 @@ class AdblockDebugMenuTableViewController: TableViewController {
     }
 
     func getLastModified(name: String, folder: String) -> String? {
-      let dateFormatter = DateFormatter().then {
-        $0.dateStyle = .short
-        $0.timeStyle = .short
-        $0.timeZone = TimeZone(abbreviation: "GMT")
-      }
-
       guard let folderUrl = fm.getOrCreateFolder(name: folder) else {
         return nil
       }
@@ -192,7 +191,7 @@ class AdblockDebugMenuTableViewController: TableViewController {
       let timeInterval = (stringData as NSString).doubleValue
       let date = Date(timeIntervalSince1970: timeInterval)
 
-      return dateFormatter.string(from: date)
+      return Self.fileDateFormatter.string(from: date)
     }
 
     func createRows(folderName: String, names: [String]) -> [Row] {
@@ -200,7 +199,10 @@ class AdblockDebugMenuTableViewController: TableViewController {
 
       var rows = [Row]()
       names.forEach {
-        if let data = fm.contents(atPath: folderUrl.appendingPathComponent($0 + ".json").path),
+        let jsonFileURL = folderUrl.appendingPathComponent($0).appendingPathExtension("json")
+        let datFileURL = folderUrl.appendingPathComponent($0).appendingPathExtension("dat")
+        
+        if let data = fm.contents(atPath: jsonFileURL.path),
           let json = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments) as? [[String: Any]] {
           let text = "\($0).json: \(json.count) rules"
           let name = $0 + ".json"
@@ -213,7 +215,7 @@ class AdblockDebugMenuTableViewController: TableViewController {
           rows.append(.init(text: text, detailText: detail, cellClass: ShrinkingSubtitleCell.self))
         }
 
-        if fm.contents(atPath: folderUrl.appendingPathComponent($0 + ".dat").path) != nil {
+        if fm.contents(atPath: datFileURL.path) != nil {
           let name = $0 + ".dat"
 
           let etag = getEtag(name: name, folder: folderName) ?? "-"
@@ -226,17 +228,66 @@ class AdblockDebugMenuTableViewController: TableViewController {
       }
       return rows
     }
-
-    let cosmeticFilterNames = [
-      CosmeticFiltersResourceDownloader.ResourceType.generalCosmetifFilters.resourceName,
-      CosmeticFiltersResourceDownloader.ResourceType.generalScriptletResources.resourceName,
-    ]
-
-    var rows = [Row]()
-    rows.append(contentsOf: createRows(folderName: AdblockResourceDownloader.folderName, names: names))
-    rows.append(contentsOf: createRows(folderName: CosmeticFiltersResourceDownloader.folderName, names: cosmeticFilterNames))
-    section.rows = rows
-    return section
+    
+    return Section(
+      header: "Downloaded cosmetic filters",
+      rows: createRows(folderName: CosmeticFiltersResourceDownloader.folderName, names: [
+        CosmeticFiltersResourceDownloader.ResourceType.generalCosmetifFilters.resourceName,
+        CosmeticFiltersResourceDownloader.ResourceType.generalScriptletResources.resourceName,
+      ]),
+      footer: "Cosmetic filters downloaded from the internet at app launch"
+    )
+  }
+  
+  private func downloadedResourcesSection() -> Section {
+    func createRows(from resources: [ResourceDownloader.Resource]) -> [Row] {
+      resources.compactMap { createRow(from: $0) }
+    }
+    
+    func getEtag(from resource: ResourceDownloader.Resource) -> String? {
+      do {
+        return try ResourceDownloader.etag(for: resource)
+      } catch {
+        return nil
+      }
+    }
+    
+    func getFileCreation(for resource: ResourceDownloader.Resource) -> String? {
+      do {
+        guard let date = try ResourceDownloader.creationDate(for: resource) else { return nil }
+        return Self.fileDateFormatter.string(from: date)
+      } catch {
+        return nil
+      }
+    }
+    
+    func createRow(from resource: ResourceDownloader.Resource) -> Row? {
+      guard let fileURL = ResourceDownloader.downloadedFileURL(for: resource) else {
+        return nil
+      }
+      
+      let detailText = [
+        "created date: \(getFileCreation(for: resource) ?? "nil")",
+        "etag: \(getEtag(from: resource) ?? "nil")",
+        "folder: \(fileURL.deletingLastPathComponent().path)"
+      ].joined(separator: "\n")
+      
+      return Row(text: fileURL.lastPathComponent, detailText: detailText, cellClass: MultilineSubtitleCell.self)
+    }
+    
+    var resources = FilterListResourceSubscriber.shared.filterListWrappers.flatMap { filterListWrapper -> [ResourceDownloader.Resource] in
+      return FilterListResourcePublisher.ResourceType.allCases.map { resourceType -> ResourceDownloader.Resource in
+        return resourceType.downloadResource(for: filterListWrapper.filterList)
+      }
+    }
+    
+    resources.append(contentsOf: [.debounceRules, .genericContentBlockingBehaviors, .genericFilterRules])
+    
+    return Section(
+      header: "Downloaded resources",
+      rows: createRows(from: resources),
+      footer: "Lists downloaded from the internet at app launch using the ResourceDownloader."
+    )
   }
 }
 

@@ -200,7 +200,7 @@ public class CosmeticFiltersResourceDownloader {
       }
       .subscribe(on: DispatchQueue.global(qos: .userInitiated))
       .compactMap { resource in
-        return self.writeFilesToDisk(resources: [resource], name: fileName) ? resource : nil
+        return self.writeFilesToDisk(resources: [resource], name: type.resourceName) ? resource : nil
       }
       .flatMap { resource in
         self.setUpFiles(into: engine, resources: [resource])
@@ -226,7 +226,7 @@ public class CosmeticFiltersResourceDownloader {
     let folderName = CosmeticFiltersResourceDownloader.folderName
 
     resources.forEach {
-      let fileName = name + ".\($0.type.fileType.rawValue)"
+      let fileName = [name, $0.type.fileExtension].joined(separator: ".")
       fileSaveCompletions.append(
         fm.writeToDiskInFolder(
           $0.resource.data, fileName: fileName,
@@ -264,13 +264,13 @@ public class CosmeticFiltersResourceDownloader {
     }
     
     let resources: [AnyPublisher<Void, Error>] = resources.compactMap({
-      switch $0.type.fileType {
-      case .dat:
+      switch $0.type {
+      case .generalCosmetifFilters:
         return self.setDataFile(
           into: engine,
           data: $0.resource.data,
           id: $0.type.resourceName)
-      case .json:
+      case .generalScriptletResources:
         return self.setJSONFile(
           into: engine,
           data: $0.resource.data,
@@ -344,15 +344,6 @@ extension CosmeticFiltersResourceDownloader {
     case generalCosmetifFilters
     case generalScriptletResources
     
-    var fileType: FileType {
-      switch self {
-      case .generalCosmetifFilters:
-        return .dat
-      case .generalScriptletResources:
-        return .json
-      }
-    }
-    
     var resourceName: String {
       switch self {
       case .generalCosmetifFilters:
@@ -362,8 +353,17 @@ extension CosmeticFiltersResourceDownloader {
       }
     }
     
+    var fileExtension: String {
+      switch self {
+      case .generalCosmetifFilters:
+        return "dat"
+      case .generalScriptletResources:
+        return "json"
+      }
+    }
+    
     var fileName: String {
-      return [resourceName, fileType.rawValue].joined(separator: ".")
+      return [resourceName, fileExtension].joined(separator: ".")
     }
     
     var filePath: String {

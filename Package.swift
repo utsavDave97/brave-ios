@@ -98,6 +98,7 @@ let package = Package(
         .copy("Assets/SessionRestore.html"),
         .copy("Assets/SpotlightHelper.js"),
         .copy("Assets/top_sites.json"),
+        .copy("Assets/filter_lists.json"),
         .copy("Assets/Fonts/FiraSans-Bold.ttf"),
         .copy("Assets/Fonts/FiraSans-BoldItalic.ttf"),
         .copy("Assets/Fonts/FiraSans-Book.ttf"),

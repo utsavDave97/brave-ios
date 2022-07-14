@@ -49,10 +49,10 @@ public class AdBlockStats: LocalAdblockResourceProtocol {
   fileprivate var fifoCacheOfUrlsChecked = FifoDict<Bool>()
 
   // Adblock engine for general adblock lists.
-  private let generalAdblockEngine: AdblockEngine
+  private(set) var generalAdblockEngine: AdblockEngine
 
   /// Adblock engine for regional, non-english locales.
-  private var regionalAdblockEngine: AdblockEngine?
+  private(set) var filterListsEngine: AdblockEngine?
 
   /// The task that downloads all the files. Can be cancelled
   private var downloadTask: AnyCancellable?
@@ -67,7 +67,6 @@ public class AdBlockStats: LocalAdblockResourceProtocol {
 
   public func startLoading() {
     parseBundledGeneralBlocklist()
-    loadDownloadedDatFiles()
   }
   
   /// Checks the general and regional engines to see if the request should be blocked.
@@ -97,7 +96,7 @@ public class AdBlockStats: LocalAdblockResourceProtocol {
       requestURL: requestURL,
       sourceURL: sourceURL,
       resourceType: resourceType
-    ) || (isRegionalAdblockEnabled && regionalAdblockEngine?.shouldBlock(
+    ) || (isRegionalAdblockEnabled && filterListsEngine?.shouldBlock(
       requestURL: requestURL,
       sourceURL: sourceURL,
       resourceType: resourceType
@@ -124,40 +123,6 @@ public class AdBlockStats: LocalAdblockResourceProtocol {
     }
   }
 
-  private func loadDownloadedDatFiles() {
-    let fm = FileManager.default
-
-    guard let folderUrl = fm.getOrCreateFolder(name: AdblockResourceDownloader.folderName) else {
-      log.error("Could not get directory with .dat files")
-      return
-    }
-
-    let enumerator = fm.enumerator(at: folderUrl, includingPropertiesForKeys: nil)
-    let filePaths = enumerator?.allObjects as? [URL]
-    let datFileUrls = filePaths?.filter { $0.pathExtension == "dat" }
-
-    downloadTask = nil
-    let setupFiles = datFileUrls?.compactMap({ url -> AnyPublisher<Void, Error>? in
-      let fileName = url.deletingPathExtension().lastPathComponent
-      guard let data = fm.contents(atPath: url.path) else { return nil }
-      return self.setDataFile(data: data, id: fileName)
-    }) ?? []
-    
-    if !setupFiles.isEmpty {
-      downloadTask = Publishers.MergeMany(setupFiles)
-        .collect()
-        .subscribe(on: DispatchQueue.global(qos: .userInitiated))
-        .map({ _ in () })
-        .sink { res in
-          if case .failure(let error) = res {
-            log.error("Failed to Setup Adblock Stats: \(error)")
-          }
-        } receiveValue: { _ in
-          log.debug("Successfully Setup Adblock Stats")
-        }
-    }
-  }
-
   // Firefox has uses urls of the form
   // http://localhost:6571/errors/error.html?url=http%3A//news.google.ca/
   // to populate the browser history, and load+redirect using GCDWebServer
@@ -173,35 +138,15 @@ public class AdBlockStats: LocalAdblockResourceProtocol {
       return url
     }
   }
-
-  func setDataFile(data: Data, id: String) -> AnyPublisher<Void, Error> {
-    if !isGeneralAdblocker(id: id) && regionalAdblockEngine == nil {
-      regionalAdblockEngine = AdblockEngine()
-    }
-
-    guard let engine = isGeneralAdblocker(id: id) ? generalAdblockEngine : regionalAdblockEngine else {
-      return Fail(error: "Adblock engine with id: \(id) is nil").eraseToAnyPublisher()
-    }
-
-    return Combine.Deferred {
-      Future { completion in
-        AdBlockStats.adblockSerialQueue.async {
-          if engine.deserialize(data: data) {
-            log.debug("Adblock file with id: \(id) deserialized successfully")
-            // Clearing the cache or checked urls.
-            // The new list can bring blocked resource that were previously set as not-blocked.
-            self.fifoCacheOfUrlsChecked = FifoDict<Bool>()
-            completion(.success(()))
-          } else {
-            completion(.failure("Failed to deserialize adblock list with id: \(id)"))
-          }
-        }
-      }
-    }.eraseToAnyPublisher()
+  
+  func set(filterListsEngine: AdblockEngine) {
+    self.filterListsEngine = filterListsEngine
+    self.fifoCacheOfUrlsChecked = FifoDict<Bool>()
   }
-
-  private func isGeneralAdblocker(id: String) -> Bool {
-    return id == AdblockerType.general.identifier || id == bundledGeneralBlocklist
+  
+  func set(genericEngine: AdblockEngine) {
+    self.generalAdblockEngine = genericEngine
+    self.fifoCacheOfUrlsChecked = FifoDict<Bool>()
   }
 }
 
@@ -215,7 +160,7 @@ extension AdBlockStats {
       generalAdblockEngine.cosmeticResourcesForURL(url.absoluteString),
     ]
     
-    if isRegionalAdblockEnabled, let rules = regionalAdblockEngine?.cosmeticResourcesForURL(url.absoluteString) {
+    if isRegionalAdblockEnabled, let rules = filterListsEngine?.cosmeticResourcesForURL(url.absoluteString) {
       rulesList.append(rules)
     }
     
