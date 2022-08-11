@@ -12,6 +12,8 @@ import class SwiftUI.UIHostingController
 import UIKit
 import BraveUI
 import BraveNews
+import Data
+import Combine
 
 private let log = Logger.browserLogger
 
@@ -20,12 +22,20 @@ class BraveShieldsAndPrivacySettingsController: TableViewController {
   let tabManager: TabManager
   let feedDataSource: FeedDataSource
   let historyAPI: BraveHistoryAPI
+  private let cookieConsentNoticesRowUUID = UUID()
+  private var filterListsSubscription: AnyCancellable?
+  private var currentCookieConsentNoticeBlockingState: Bool
 
   init(profile: Profile, tabManager: TabManager, feedDataSource: FeedDataSource, historyAPI: BraveHistoryAPI) {
     self.profile = profile
     self.tabManager = tabManager
     self.feedDataSource = feedDataSource
     self.historyAPI = historyAPI
+    
+    self.currentCookieConsentNoticeBlockingState = FilterListResourceDownloader.shared.isEnabled(
+      filterListUUID: FilterListResourceDownloader.cookieConsentNoticesUUID
+    )
+    
     super.init(style: .insetGrouped)
   }
 
@@ -45,6 +55,32 @@ class BraveShieldsAndPrivacySettingsController: TableViewController {
       manageWebsiteDataSection,
       otherSettingsSection,
     ]
+    
+    // Listen to changes on filter lists so we know we need to reload the section
+    filterListsSubscription = FilterListResourceDownloader.shared.$filterLists
+      .receive(on: DispatchQueue.main)
+      .sink { filterLists in
+        let filterList = filterLists.first(where: { $0.uuid == FilterListResourceDownloader.cookieConsentNoticesUUID })
+        let isEnabled = filterList?.isEnabled ?? false
+        
+        if isEnabled != self.currentCookieConsentNoticeBlockingState {
+          self.currentCookieConsentNoticeBlockingState = isEnabled
+          
+          guard let sectionIndex = self.dataSource.sections.firstIndex(where: { $0.uuid == self.shieldsSection.uuid }) else {
+            assertionFailure("Should exist")
+            return
+          }
+          
+          guard let rowIndex = self.shieldsSection.rows.firstIndex(where: { $0.uuid == self.cookieConsentNoticesRowUUID.uuidString }) else {
+            assertionFailure("Should exist")
+            return
+          }
+          
+          // Reload the section
+          self.shieldsSection.rows[rowIndex] = self.makeCookieConsentBlockingRow()
+          self.dataSource.sections[sectionIndex] = self.shieldsSection
+        }
+      }
   }
 
   // MARK: - Sections
@@ -109,7 +145,13 @@ class BraveShieldsAndPrivacySettingsController: TableViewController {
               toggleCookieSetting(with: $0)
             }
           }),
-        .boolRow(title: Strings.fingerprintingProtection, detailText: Strings.fingerprintingProtectionDescription, option: Preferences.Shields.fingerprintingProtection),
+        
+        .boolRow(
+          title: Strings.fingerprintingProtection,
+          detailText: Strings.fingerprintingProtectionDescription,
+          option: Preferences.Shields.fingerprintingProtection
+        ),
+        makeCookieConsentBlockingRow(),
         Row(
           text: Strings.contentFiltering,
           detailText: Strings.contentFilteringDescription,
@@ -253,6 +295,22 @@ class BraveShieldsAndPrivacySettingsController: TableViewController {
   }()
 
   // MARK: - Actions
+  
+  private func makeCookieConsentBlockingRow() -> Row {
+    return .boolRow(
+      uuid: self.cookieConsentNoticesRowUUID,
+      title: Strings.blockCookieConsentNotices,
+      detailText: nil,
+      toggleValue: FilterListResourceDownloader.shared.isEnabled(
+        filterListUUID: FilterListResourceDownloader.cookieConsentNoticesUUID
+      ),
+      valueChange: { isEnabled in
+        if !FilterListResourceDownloader.shared.enableFilterList(forFilterListUUID: FilterListResourceDownloader.cookieConsentNoticesUUID, isEnabled: isEnabled) {
+          assertionFailure("This filter list should exist or this UI is completely useless")
+        }
+      }, cellReuseId: "blockCookieConsentNoticesReuseIdentifier"
+    )
+  }
 
   private func tappedClearPrivateData() {
     let alertController = UIAlertController(

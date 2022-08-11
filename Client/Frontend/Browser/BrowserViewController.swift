@@ -1134,6 +1134,7 @@ public class BrowserViewController: UIViewController, BrowserViewControllerDeleg
       self.presentDefaultBrowserScreenCallout()
       self.presentBraveRewardsScreenCallout()
       self.presentSyncAlertCallout()
+      self.presentCookieNotificationBlockingCalloutIfNeeded()
     }
 
     screenshotHelper.viewIsVisible = true
