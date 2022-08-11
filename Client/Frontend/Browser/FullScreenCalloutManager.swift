@@ -10,11 +10,12 @@ import BraveShared
 struct FullScreenCalloutManager {
 
   enum FullScreenCalloutType {
-    case vpn, sync, rewards, defaultBrowser
+    case vpn, sync, rewards, defaultBrowser, blockCookieConsentNotices
 
     /// The number of days passed to show certain type of callout
     var period: Int {
       switch self {
+      case .blockCookieConsentNotices: return 0
       case .vpn: return 4
       case .sync: return 6
       case .rewards: return 8
@@ -25,12 +26,18 @@ struct FullScreenCalloutManager {
     /// The preference value stored for complete state
     var preferenceValue: Preferences.Option<Bool> {
       switch self {
+      case .blockCookieConsentNotices: return Preferences.FullScreenCallout.blockCookieConsentNoticesCalloutCompleted
       case .vpn: return Preferences.FullScreenCallout.vpnCalloutCompleted
       case .sync: return Preferences.FullScreenCallout.syncCalloutCompleted
       case .rewards: return Preferences.FullScreenCallout.rewardsCalloutCompleted
       case .defaultBrowser: return Preferences.DefaultBrowserIntro.completed
       }
     }
+  }
+  
+  /// Allows this popup to re-appear for the given callout type
+  static func enable(for calloutType: FullScreenCalloutType) {
+    calloutType.preferenceValue.value = false
   }
 
   /// It determines whether we should show show the designated callout or not and sets corresponding preferences accordingly.
