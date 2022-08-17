@@ -8,6 +8,7 @@ import Static
 import Shared
 import BraveShared
 import BraveUI
+import SwiftUI
 
 private let log = Logger.browserLogger
 
@@ -106,7 +107,12 @@ public class BraveVPNSettingsViewController: TableViewController {
         // Opens Apple's 'manage subscription' screen.
         UIApplication.shared.open(url, options: [:])
       }
-    }, cellClass: ButtonCell.self)])
+    }, cellClass: ButtonCell.self),
+                   Row(text: Strings.VPN.settingsLinkReceipt,
+                       selection: { [unowned self] in
+      let host = UIHostingController(rootView: LinkPurchaseView())
+      navigationController?.pushViewController(host, animated: true)
+    }, accessory: .disclosureIndicator, cellClass: ButtonCell.self)])
     
     let location = BraveVPN.serverLocation ?? "-"
     

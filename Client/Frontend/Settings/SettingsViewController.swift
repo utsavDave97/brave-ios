@@ -476,22 +476,14 @@ class SettingsViewController: TableViewController {
       text: Strings.VPN.vpnName, detailText: text,
       selection: { [unowned self] in
 
-        let vc = { () -> UIViewController? in
-          switch BraveVPN.vpnState {
-          case .notPurchased, .expired:
-            return BraveVPN.vpnState.enableVPNDestinationVC
-          case .purchased:
-            let vc = BraveVPNSettingsViewController()
-            vc.faqButtonTapped = { [weak self] in
-              self?.settingsDelegate?.settingsOpenURLInNewTab(BraveUX.braveVPNFaqURL)
-              self?.dismiss(animated: true)
-            }
-            return vc
-          }
-        }()
+        // FIXME: Remove temp code, now it always opens settings.
+        let vc = BraveVPNSettingsViewController()
+        vc.faqButtonTapped = { [weak self] in
+          self?.settingsDelegate?.settingsOpenURLInNewTab(BraveUX.braveVPNFaqURL)
+          self?.dismiss(animated: true)
+        }
 
-        guard let vcToShow = vc else { return }
-        self.navigationController?.pushViewController(vcToShow, animated: true)
+        self.navigationController?.pushViewController(vc, animated: true)
       }, image: UIImage(named: "settings-vpn", in: .current, compatibleWith: nil)!.template, accessory: .disclosureIndicator,
       cellClass: ColoredDetailCell.self, context: [ColoredDetailCell.colorKey: color], uuid: "vpnrow")
   }
