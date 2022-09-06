@@ -91,7 +91,7 @@ extension Preferences {
   }
 
   public final class Shields {
-    public static let allShields = [blockAdsAndTracking, httpsEverywhere, blockPhishingAndMalware, googleSafeBrowsing, blockScripts, fingerprintingProtection, blockImages]
+    public static let allShields = [blockAdsAndTracking, httpsEverywhere, blockPhishingAndMalware, googleSafeBrowsing, blockScripts, fingerprintingProtection]
 
     /// Shields will block ads and tracking if enabled
     public static let blockAdsAndTracking = Option<Bool>(key: "shields.block-ads-and-tracking", default: true)
@@ -107,8 +107,6 @@ extension Preferences {
     public static let fingerprintingProtection = Option<Bool>(key: "shields.fingerprinting-protection", default: true)
     /// Enable redirecting of Google's AMP (Accelerated Mobile Page) to the original (non-AMP) pages
     public static let autoRedirectAMPPages = Option<Bool>(key: "shields.auto-redirect-amp-pages", default: true)
-    /// Disables image loading in the browser
-    public static let blockImages = Option<Bool>(key: "shields.block-images", default: false)
     /// In addition to global adblocking rules, adds custom country based rules.
     /// This setting is enabled by default for all locales.
     public static let useRegionAdBlock = Option<Bool>(key: "shields.regional-adblock", default: true)

@@ -1467,10 +1467,6 @@ public class BrowserViewController: UIViewController, BrowserViewControllerDeleg
       if tab === tabManager.selectedTab {
         topToolbar.locationView.loading = tab.loading
       }
-
-      if !loading {
-        runScriptsOnWebView(webView)
-      }
     case .URL:
       guard let tab = tabManager[webView] else { break }
 
@@ -1612,15 +1608,6 @@ public class BrowserViewController: UIViewController, BrowserViewControllerDeleg
       }
     default:
       assertionFailure("Unhandled KVO key: \(keyPath ?? "nil")")
-    }
-  }
-
-  fileprivate func runScriptsOnWebView(_ webView: WKWebView) {
-    guard let url = webView.url, url.isWebPage(), !url.isLocal else {
-      return
-    }
-    if NoImageModeHelper.isActivated {
-      webView.evaluateSafeJavaScript(functionName: "__firefox__.NoImageMode.setEnabled", args: ["true"], contentWorld: .defaultClient)
     }
   }
 
@@ -2065,9 +2052,6 @@ public class BrowserViewController: UIViewController, BrowserViewControllerDeleg
         // ignore the result because we are being called back asynchronous when the readermode status changes.
         webView.evaluateSafeJavaScript(functionName: "\(ReaderModeNamespace).checkReadability", contentWorld: .defaultClient)
 
-        // Re-run additional scripts in webView to extract updated favicons and metadata.
-        runScriptsOnWebView(webView)
-
         // Only add history of a url which is not a localhost url
         if !tab.isPrivate, !url.isReaderModeURL {
           // The visitType is checked If it is "typed" or not to determine the History object we are adding
@@ -2324,9 +2308,6 @@ extension BrowserViewController: TabDelegate {
     let findInPageHelper = FindInPageHelper(tab: tab)
     findInPageHelper.delegate = self
     tab.addContentScript(findInPageHelper, name: FindInPageHelper.name(), contentWorld: .defaultClient)
-
-    let noImageModeHelper = NoImageModeHelper(tab: tab)
-    tab.addContentScript(noImageModeHelper, name: NoImageModeHelper.name(), contentWorld: .defaultClient)
 
     let printHelper = PrintHelper(browserController: self, tab: tab)
     tab.addContentScript(printHelper, name: PrintHelper.name(), contentWorld: .page)
@@ -3474,7 +3455,6 @@ extension BrowserViewController: PreferencesObserver {
     case Preferences.Shields.blockAdsAndTracking.key,
       Preferences.Shields.blockScripts.key,
       Preferences.Shields.blockPhishingAndMalware.key,
-      Preferences.Shields.blockImages.key,
       Preferences.Shields.fingerprintingProtection.key,
       Preferences.Shields.useRegionAdBlock.key:
       tabManager.allTabs.forEach { $0.webView?.reload() }

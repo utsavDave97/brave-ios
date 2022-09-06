@@ -55,10 +55,6 @@ class TPStatsBlocklistChecker {
       return
     }
 
-    if resourceType == .image && Preferences.Shields.blockImages.value {
-      callback(.image)
-    }
-
     adblockSerialQueue.async {
       if (loadedRuleTypes.contains(.general(.blockAds)) || loadedRuleTypes.contains(.general(.blockTrackers)))
           && AdBlockStats.shared.shouldBlock(requestURL: requestURL, sourceURL: sourceURL, resourceType: resourceType) {
@@ -68,22 +64,9 @@ class TPStatsBlocklistChecker {
         
         return
       }
-
-      // TODO: Downgrade to 14.5 once api becomes available.
-      if #unavailable(iOS 15.0) {
-        HttpsEverywhereStats.shared.shouldUpgrade(requestURL) { shouldUpgrade in
-          DispatchQueue.main.async {
-            if loadedRuleTypes.contains(.general(.upgradeHTTP)) && shouldUpgrade {
-              callback(.http)
-            } else {
-              callback(nil)
-            }
-          }
-        }
-      } else {
-        DispatchQueue.main.async {
-          callback(nil)
-        }
+      
+      DispatchQueue.main.async {
+        callback(nil)
       }
     }
   }

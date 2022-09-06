@@ -108,7 +108,6 @@ class TabManager: NSObject {
     self.navDelegate.tabManager = self
     addNavigationDelegate(self)
 
-    Preferences.Shields.blockImages.observe(from: self)
     Preferences.General.blockPopups.observe(from: self)
     Preferences.General.nightModeEnabled.observe(from: self)
     
