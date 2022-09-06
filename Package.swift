@@ -22,10 +22,11 @@ let package = Package(
     .library(name: "Data", targets: ["Data"]),
     .library(name: "Storage", targets: ["Storage", "sqlcipher"]),
     .library(name: "BrowserIntentsModels", targets: ["BrowserIntentsModels"]),
-    .library(name: "BraveWidgetsModels", targets: ["BraveWidgetsModels"]),
+    .library(name: "BraveWidgets", targets: ["BraveWidgets"]),
     .library(name: "Strings", targets: ["Strings"]),
     .library(name: "BraveVPN", targets: ["BraveVPN"]),
     .library(name: "BraveNews", targets: ["BraveNews"]),
+    .library(name: "BraveFavicon", targets: ["BraveFavicon"]),
     .library(name: "RuntimeWarnings", targets: ["RuntimeWarnings"]),
     .plugin(name: "IntentBuilderPlugin", targets: ["IntentBuilderPlugin"]),
     .plugin(name: "CurrentBundleGenPlugin", targets: ["CurrentBundleGenPlugin"]),
@@ -74,10 +75,11 @@ let package = Package(
         "SwiftyJSON",
         "XCGLogger",
         "BrowserIntentsModels",
-        "BraveWidgetsModels",
+        "BraveWidgets",
         "BraveVPN",
         "BraveNews",
         "CodableHelpers",
+        "BraveFavicon",
         .product(name: "Lottie", package: "lottie-ios"),
         .product(name: "Collections", package: "swift-collections"),
       ],
@@ -100,7 +102,6 @@ let package = Package(
         .copy("Assets/MainFrameAtDocumentStartSandboxed.js"),
         .copy("Assets/SessionRestore.html"),
         .copy("Assets/SpotlightHelper.js"),
-        .copy("Assets/top_sites.json"),
         .copy("Assets/Fonts/FiraSans-Bold.ttf"),
         .copy("Assets/Fonts/FiraSans-BoldItalic.ttf"),
         .copy("Assets/Fonts/FiraSans-Book.ttf"),
@@ -129,7 +130,6 @@ let package = Package(
         .copy("Assets/Interstitial Pages/Styles/InterstitialStyles.css"),
         .copy("Assets/Interstitial Pages/Styles/NetworkError.css"),
         .copy("Assets/SearchPlugins"),
-        .copy("Assets/TopSites"),
         .copy("Frontend/Reader/Reader.css"),
         .copy("Frontend/Reader/Reader.html"),
         .copy("Frontend/Reader/ReaderViewLoading.html"),
@@ -160,6 +160,7 @@ let package = Package(
         .copy("Frontend/UserContent/UserScripts/BraveTalkHelper.js"),
         .copy("Frontend/UserContent/UserScripts/CookieControl.js"),
         .copy("Frontend/UserContent/UserScripts/FarblingProtection.js"),
+        .copy("Frontend/UserContent/UserScripts/FaviconHelper.js"),
         .copy("Frontend/UserContent/UserScripts/FullscreenHelper.js"),
         .copy("Frontend/UserContent/UserScripts/MediaBackgrounding.js"),
         .copy("Frontend/UserContent/UserScripts/nacl.min.js"),
@@ -289,8 +290,9 @@ let package = Package(
       plugins: ["IntentBuilderPlugin"]
     ),
     .target(
-      name: "BraveWidgetsModels",
-      sources: ["BraveWidgets.intentdefinition", "Empty.swift"],
+      name: "BraveWidgets",
+      dependencies: ["BraveFavicon"],
+      sources: ["BraveWidgets.intentdefinition", "FavoritesWidgetData.swift"],
       plugins: ["IntentBuilderPlugin"]
     ),
     .target(name: "BraveSharedTestUtils"),
@@ -339,6 +341,20 @@ let package = Package(
       .copy("opml-test-files/states.opml"),
     ]),
     .target(name: "CodableHelpers"),
+    .target(
+      name: "BraveFavicon",
+      dependencies: [
+        "BraveCore",
+        "BraveShared",
+        "Shared",
+        "SDWebImage",
+      ],
+      resources: [
+        .copy("Assets/top_sites.json"),
+        .copy("Assets/TopSites")
+      ],
+      plugins: ["CurrentBundleGenPlugin"]
+    ),
     .testTarget(name: "SharedTests", dependencies: ["Shared"]),
     .testTarget(
       name: "BraveSharedTests",

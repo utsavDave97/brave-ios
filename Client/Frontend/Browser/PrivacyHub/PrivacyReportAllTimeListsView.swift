@@ -6,6 +6,7 @@ import SwiftUI
 import Shared
 import BraveShared
 import Data
+import BraveFavicon
 
 private struct FaviconImage: View {
   let url: URL?
@@ -23,7 +24,7 @@ private struct FaviconImage: View {
   }
   
   var body: some View {
-    Image(uiImage: faviconLoader.image ?? .init(named: "defaultFavicon", in: .current, compatibleWith: nil)!)
+    Image(uiImage: faviconLoader.image ?? Favicon.defaultImage)
       .resizable()
       .aspectRatio(contentMode: .fit)
       .frame(width: 30, height: 30)

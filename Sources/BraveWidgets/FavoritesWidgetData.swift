@@ -7,14 +7,15 @@ import Foundation
 import SDWebImage
 import Shared
 import WidgetKit
+import BraveFavicon
 
 private let log = Logger.browserLogger
 
 public struct WidgetFavorite: Codable {
   public var url: URL
-  public var favicon: FaviconAttributes?
+  public var favicon: Favicon?
 
-  public init(url: URL, favicon: FaviconAttributes) {
+  public init(url: URL, favicon: Favicon?) {
     self.url = url
     self.favicon = favicon
   }

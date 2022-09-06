@@ -9,6 +9,7 @@ import BraveShared
 import Storage
 import Data
 import BraveCore
+import BraveFavicon
 
 private let log = Logger.browserLogger
 
@@ -242,7 +243,7 @@ extension LoginListViewController {
           loginInfo.displayURLString,
           detailText: loginInfo.usernameValue)
         $0.imageView?.contentMode = .scaleAspectFit
-        $0.imageView?.image = FaviconFetcher.defaultFaviconImage
+        $0.imageView?.image = Favicon.defaultImage
         $0.imageView?.layer.borderColor = BraveUX.faviconBorderColor.cgColor
         $0.imageView?.layer.borderWidth = BraveUX.faviconBorderWidth
         $0.imageView?.layer.cornerRadius = 6
@@ -252,15 +253,9 @@ extension LoginListViewController {
         if let signOnRealmURL = URL(string: loginInfo.signOnRealm) {
           let domain = Domain.getOrCreate(forUrl: signOnRealmURL, persistent: true)
 
-          cell.imageView?.loadFavicon(
-            for: signOnRealmURL,
-            domain: domain,
-            fallbackMonogramCharacter: signOnRealmURL.baseDomain?.first,
-            shouldClearMonogramFavIcon: false,
-            cachedOnly: true)
+          cell.imageView?.loadFavicon(for: signOnRealmURL)
         } else {
-          cell.imageView?.clearMonogramFavicon()
-          cell.imageView?.image = FaviconFetcher.defaultFaviconImage
+          cell.imageView?.image = Favicon.defaultImage
         }
       }
 

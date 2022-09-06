@@ -8,6 +8,7 @@ import Storage
 import Shared
 import BraveCore
 import BraveShared
+import BraveFavicon
 import SwiftyJSON
 import XCGLogger
 import Data
@@ -119,6 +120,7 @@ class Tab: NSObject {
   fileprivate var lastRequest: URLRequest?
   var restoring: Bool = false
   var pendingScreenshot = false
+  private(set) var faviconDriver: FaviconLoader.Driver?
   
   /// The url set after a successful navigation. This will also set the `url` property.
   ///
@@ -315,6 +317,8 @@ class Tab: NSObject {
       if configuration!.urlSchemeHandler(forURLScheme: InternalURL.scheme) == nil {
         configuration!.setURLSchemeHandler(InternalSchemeHandler(), forURLScheme: InternalURL.scheme)
       }
+      
+      faviconDriver = FaviconLoader.Driver(privateBrowsingMode: isPrivate)
       let webView = TabWebView(frame: .zero, tab: self, configuration: configuration!, isPrivate: isPrivate)
       webView.delegate = self
       configuration = nil
@@ -513,7 +517,7 @@ class Tab: NSObject {
 
   var displayFavicon: Favicon? {
     if let url = url, InternalURL(url)?.isAboutHomeURL == true { return nil }
-    return favicons.max { $0.width! < $1.width! }
+    return favicons.first
   }
 
   var canGoBack: Bool {

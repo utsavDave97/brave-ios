@@ -184,7 +184,7 @@ extension BrowserViewController {
 
   private func presentWallet() {
     guard let walletStore = self.walletStore ?? newWalletStore() else { return }
-    let vc = WalletHostingViewController(walletStore: walletStore, faviconRenderer: FavIconImageRenderer())
+    let vc = WalletHostingViewController(walletStore: walletStore)
     vc.delegate = self
     self.dismiss(animated: true) {
       self.present(vc, animated: true)

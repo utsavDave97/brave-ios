@@ -111,11 +111,7 @@ class FavoritesSectionProvider: NSObject, NTPObservableSectionProvider {
       // point that this wasn't the case, so for future bug-tracking
       // assert if its not found.
       assert(fav.domain != nil, "Domain should exist for all favorites")
-      // The domain for the favorite is required for pulling cached
-      // favicon info. Since all favorites should have persisted
-      // Domain's, we leave `persistent` as true
-      let domain = fav.domain ?? Domain.getOrCreate(forUrl: url, persistent: true)
-      cell.imageView.loadFavicon(siteURL: url, domain: domain, monogramFallbackCharacter: fav.title?.first)
+      cell.imageView.loadFavicon(siteURL: url)
     }
     cell.accessibilityLabel = cell.textLabel.text
   }

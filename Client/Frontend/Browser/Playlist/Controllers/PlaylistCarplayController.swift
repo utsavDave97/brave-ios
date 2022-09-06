@@ -11,6 +11,7 @@ import Data
 import BraveShared
 import Shared
 import CoreData
+import BraveFavicon
 
 private let log = Logger.browserLogger
 
@@ -417,7 +418,7 @@ class PlaylistCarplayController: NSObject {
       listItem.isPlaying = player.isPlaying && (PlaylistCarplayManager.shared.currentPlaylistItem?.src == item.src)
 
       listItem.accessoryType = PlaylistManager.shared.state(for: itemId) != .downloaded ? .cloud : .none
-      listItem.setImage(FaviconFetcher.defaultFaviconImage)
+      listItem.setImage(Favicon.defaultImage)
       var userInfo = [String: Any]()
       userInfo.merge(with: [
         "id": itemId,

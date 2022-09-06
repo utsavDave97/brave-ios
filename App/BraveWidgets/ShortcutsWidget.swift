@@ -8,7 +8,7 @@ import WidgetKit
 import Strings
 import BraveShared
 import Intents
-import BraveWidgetsModels
+import BraveWidgets
 
 struct ShortcutsWidget: Widget {
   var body: some WidgetConfiguration {

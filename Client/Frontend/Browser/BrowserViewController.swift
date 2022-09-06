@@ -27,6 +27,7 @@ import class Combine.AnyCancellable
 import BraveWallet
 import BraveVPN
 import BraveNews
+import BraveFavicon
 
 private let log = Logger.browserLogger
 
@@ -203,7 +204,7 @@ public class BrowserViewController: UIViewController, BrowserViewControllerDeleg
   var isOnboardingOrFullScreenCalloutPresented = false
 
   private(set) var widgetBookmarksFRC: NSFetchedResultsController<Favorite>?
-  var widgetFaviconFetchers: [FaviconFetcher] = []
+  var widgetFaviconFetchers: [Task<Favicon, Error>] = []
   let deviceCheckClient: DeviceCheckClient?
 
   /// The currently open WalletStore
@@ -2351,6 +2352,7 @@ extension BrowserViewController: TabDelegate {
     tab.addContentScript(ReadyStateScriptHelper(tab: tab), name: ReadyStateScriptHelper.name(), contentWorld: .page)
     tab.addContentScript(DeAmpHelper(tab: tab), name: DeAmpHelper.name(), contentWorld: .defaultClient)
     tab.addContentScript(tab.requestBlockingContentHelper, name: RequestBlockingContentHelper.name(), contentWorld: .page)
+    tab.addContentScript(FaviconHelper(tab: tab), name: FaviconHelper.name(), contentWorld: .defaultClient)
   }
 
   func tab(_ tab: Tab, willDeleteWebView webView: WKWebView) {

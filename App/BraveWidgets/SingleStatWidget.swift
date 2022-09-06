@@ -8,7 +8,7 @@ import SwiftUI
 import Intents
 import Strings
 import BraveShared
-import BraveWidgetsModels
+import BraveWidgets
 import DesignSystem
 
 struct SingleStatWidget: Widget {

@@ -5,6 +5,8 @@
 import UIKit
 import Storage
 import Shared
+import BraveShared
+import BraveFavicon
 
 class BackForwardTableViewCell: UITableViewCell {
 
@@ -20,7 +22,7 @@ class BackForwardTableViewCell: UITableViewCell {
   }
 
   lazy var faviconView: UIImageView = {
-    let faviconView = UIImageView(image: FaviconFetcher.defaultFaviconImage)
+    let faviconView = UIImageView(image: Favicon.defaultImage)
     faviconView.backgroundColor = .braveBackground
     faviconView.layer.cornerRadius = 6
     faviconView.layer.cornerCurve = .continuous
@@ -67,8 +69,7 @@ class BackForwardTableViewCell: UITableViewCell {
       if let s = site {
         if InternalURL.isValid(url: s.tileURL) {
           faviconView.backgroundColor = .white
-          faviconView.image = FaviconFetcher.defaultFaviconImage
-          faviconView.clearMonogramFavicon()
+          faviconView.image = Favicon.defaultImage
         } else {
           faviconView.loadFavicon(for: s.tileURL)
         }

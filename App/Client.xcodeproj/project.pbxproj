@@ -17,7 +17,6 @@
 		279A9BCC2823370100F40FC6 /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 279A9BCB2823370100F40FC6 /* SwiftKeychainWrapper */; };
 		279A9BCE2823370100F40FC6 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 279A9BCD2823370100F40FC6 /* SDWebImage */; };
 		279C432E2853E51E00A9F708 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 279C432D2853E51E00A9F708 /* DesignSystem */; };
-		27AAA115283D2BC6004C9B5E /* BraveWidgetsModels in Frameworks */ = {isa = PBXBuildFile; productRef = 27AAA114283D2BC6004C9B5E /* BraveWidgetsModels */; };
 		27AD20C326851C5400889AA7 /* BraveCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27AD20C226851C5400889AA7 /* BraveCore.xcframework */; };
 		27AD20C426851C5400889AA7 /* BraveCore.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 27AD20C226851C5400889AA7 /* BraveCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		27B68DF025C48F39002D0826 /* MaterialComponents.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27B68DD625C48EE9002D0826 /* MaterialComponents.xcframework */; };
@@ -58,6 +57,8 @@
 		CA8B4AF0276A8339002120F7 /* BraveWidgetsExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = CA0391B2271E1023000EB13C /* BraveWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CAADEFE026E2707F0020DC4C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAADEFDF26E2707F0020DC4C /* SceneDelegate.swift */; };
 		CAAE653D287C9FCF00FA44A3 /* CPTemplateApplicationSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAE653C287C9FCF00FA44A3 /* CPTemplateApplicationSceneDelegate.swift */; };
+		CADA902D28946E6D00194B28 /* BraveWidgets in Frameworks */ = {isa = PBXBuildFile; productRef = CADA902C28946E6D00194B28 /* BraveWidgets */; };
+		D3BE7B261B054D4400641031 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BE7B251B054D4400641031 /* main.swift */; };
 		E6231C011B90A44F005ABB0D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C001B90A44F005ABB0D /* libz.tbd */; };
 		E6231C051B90A472005ABB0D /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E6231C041B90A472005ABB0D /* libxml2.2.tbd */; };
 		F84B22041A0910F600AAB793 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F84B21E51A0910F600AAB793 /* AppDelegate.swift */; };
@@ -382,9 +383,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				27FA217B2837F95400FA2C45 /* Strings in Frameworks */,
+				CADA902D28946E6D00194B28 /* BraveWidgets in Frameworks */,
 				279C432E2853E51E00A9F708 /* DesignSystem in Frameworks */,
 				CA0391B6271E1023000EB13C /* SwiftUI.framework in Frameworks */,
-				27AAA115283D2BC6004C9B5E /* BraveWidgetsModels in Frameworks */,
 				27FA217D2837F9EE00FA2C45 /* BraveShared in Frameworks */,
 				CA0391B4271E1023000EB13C /* WidgetKit.framework in Frameworks */,
 			);
@@ -730,8 +731,8 @@
 			packageProductDependencies = (
 				27FA217A2837F95400FA2C45 /* Strings */,
 				27FA217C2837F9EE00FA2C45 /* BraveShared */,
-				27AAA114283D2BC6004C9B5E /* BraveWidgetsModels */,
 				279C432D2853E51E00A9F708 /* DesignSystem */,
+				CADA902C28946E6D00194B28 /* BraveWidgets */,
 			);
 			productName = BraveWidgetsExtension;
 			productReference = CA0391B2271E1023000EB13C /* BraveWidgetsExtension.appex */;
@@ -2911,10 +2912,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignSystem;
 		};
-		27AAA114283D2BC6004C9B5E /* BraveWidgetsModels */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BraveWidgetsModels;
-		};
 		27D972E528BD4D9900DDCF79 /* BraveNews */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BraveNews;
@@ -2954,6 +2951,10 @@
 		27FA218A2837FB0100FA2C45 /* Storage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Storage;
+		};
+		CADA902C28946E6D00194B28 /* BraveWidgets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BraveWidgets;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -10,6 +10,8 @@ import AVFoundation
 import Data
 import Shared
 import BraveUI
+import BraveShared
+import BraveFavicon
 
 private let log = Logger.browserLogger
 
@@ -106,7 +108,7 @@ extension PlaylistListViewController: UITableViewDataSource {
       cell.thumbnailGenerator.loadThumbnail(assetUrl: assetUrl, favIconUrl: favIconUrl) { [weak cell] image in
         guard let cell = cell else { return }
 
-        cell.thumbnailView.image = image ?? FaviconFetcher.defaultFaviconImage
+        cell.thumbnailView.image = image ?? Favicon.defaultImage
         cell.thumbnailView.backgroundColor = .black
         cell.thumbnailView.contentMode = .scaleAspectFit
         cell.thumbnailActivityIndicator.stopAnimating()

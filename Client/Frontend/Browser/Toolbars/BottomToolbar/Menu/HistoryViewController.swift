@@ -9,6 +9,7 @@ import Storage
 import Data
 import CoreData
 import BraveCore
+import BraveFavicon
 import UIKit
 
 class HistoryViewController: SiteTableViewController, ToolbarUrlActionsProtocol {
@@ -229,28 +230,13 @@ class HistoryViewController: SiteTableViewController, ToolbarUrlActionsProtocol 
       $0.setLines(historyItem.title, detailText: historyItem.url.absoluteString)
 
       $0.imageView?.contentMode = .scaleAspectFit
-      $0.imageView?.image = FaviconFetcher.defaultFaviconImage
+      $0.imageView?.image = Favicon.defaultImage
       $0.imageView?.layer.borderColor = BraveUX.faviconBorderColor.cgColor
       $0.imageView?.layer.borderWidth = BraveUX.faviconBorderWidth
       $0.imageView?.layer.cornerRadius = 6
       $0.imageView?.layer.cornerCurve = .continuous
       $0.imageView?.layer.masksToBounds = true
-
-      let domain = Domain.getOrCreate(
-        forUrl: historyItem.url,
-        persistent: !PrivateBrowsingManager.shared.isPrivateBrowsing)
-
-      if let url = domain.url?.asURL {
-        cell.imageView?.loadFavicon(
-          for: url,
-          domain: domain,
-          fallbackMonogramCharacter: historyItem.title?.first,
-          shouldClearMonogramFavIcon: false,
-          cachedOnly: true)
-      } else {
-        cell.imageView?.clearMonogramFavicon()
-        cell.imageView?.image = FaviconFetcher.defaultFaviconImage
-      }
+      $0.imageView?.loadFavicon(for: historyItem.url)
     }
   }
 
