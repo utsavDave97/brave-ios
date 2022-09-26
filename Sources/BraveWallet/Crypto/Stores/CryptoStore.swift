@@ -57,7 +57,6 @@ public class CryptoStore: ObservableObject {
       }
     }
   }
-  @Published public var latestPermissionRequest: WebpagePermissionRequest?
   @Published private(set) var pendingRequest: PendingRequest?
   
   private let keyringService: BraveWalletKeyringService
