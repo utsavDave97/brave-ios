@@ -80,8 +80,7 @@ extension BrowserViewController {
   /// when the pending request is updated so we can update the wallet url bar button.
   func newWalletStore() -> WalletStore? {
     let privateMode = PrivateBrowsingManager.shared.isPrivateBrowsing
-    guard let walletStore = WalletStore.from(privateMode: privateMode)
-    else {
+    guard let walletStore = WalletStore.from(privateMode: privateMode) else {
       log.error("Failed to load wallet. One or more services were unavailable")
       return nil
     }
@@ -198,7 +197,7 @@ extension Tab: BraveWalletProviderDelegate {
       }
       
       // add permission request to the queue
-      _ = permissionRequestManager.beginRequest(for: origin, coinType: coinType, providerHandler: completion, completion: { response in
+      let request = permissionRequestManager.beginRequest(for: origin, coinType: coinType, providerHandler: completion, completion: { response in
         switch response {
         case .granted(let accounts):
           completion(.none, accounts)
@@ -208,6 +207,7 @@ extension Tab: BraveWalletProviderDelegate {
         self.tabDelegate?.updateURLBarWalletButton()
       })
 
+      self.tabDelegate?.updateWebpagePermissionRequest(request)
       self.tabDelegate?.showWalletNotification(self, origin: origin)
     }
   }
@@ -271,6 +271,11 @@ extension Tab: BraveWalletProviderDelegate {
   }
   
   func showAccountCreation(_ type: BraveWallet.CoinType) {
+    let origin = getOrigin()
+    // store the account creation request
+    WalletProviderAccountCreationRequestManager.shared.addRequest(or: origin, coinType: type)
+    // show wallet notification
+    self.tabDelegate?.showWalletNotification(self, origin: origin)
   }
   
   func isSolanaAccountConnected(_ account: String) -> Bool {
