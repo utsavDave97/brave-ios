@@ -300,7 +300,6 @@ class BraveShieldsAndPrivacySettingsController: TableViewController {
     return .boolRow(
       uuid: self.cookieConsentNoticesRowUUID,
       title: Strings.blockCookieConsentNotices,
-      detailText: nil,
       toggleValue: FilterListResourceDownloader.shared.isEnabled(
         filterListUUID: FilterListResourceDownloader.cookieConsentNoticesUUID
       ),

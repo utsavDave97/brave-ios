@@ -117,7 +117,7 @@ class GIFImageView: UIView, CAAnimationDelegate {
       Int(delayForImage(at: $0, source: source) * 1000)
     }
     
-    let gcd = delays.reduce(0, gcd)
+    let gcd = delays.reduce(0, absoluteGCDEuklidean)
     
     return (0..<count).flatMap { index -> [UIImage] in
       guard let cgImage = CGImageSourceCreateImageAtIndex(source, index, nil) else {
@@ -132,13 +132,15 @@ class GIFImageView: UIView, CAAnimationDelegate {
     }
   }
   
-  private class func gcd(_ a: Int, _ b: Int) -> Int {
-    let absB = abs(b)
-    let r = abs(a) % absB
-    if r != 0 {
-      return gcd(absB, r)
+  /// Return the greatest common divisor of two integers using recursive euklidean returning only an absolut value
+  /// https://github.com/raywenderlich/swift-algorithm-club/blob/master/GCD/README.markdown
+  private class func absoluteGCDEuklidean(_ firstValue: Int, _ secondValue: Int) -> Int {
+    let secondAbsolute = abs(secondValue)
+    let remainder = abs(firstValue) % secondAbsolute
+    if remainder != 0 {
+      return absoluteGCDEuklidean(secondAbsolute, remainder)
     } else {
-      return absB
+      return secondAbsolute
     }
   }
   
