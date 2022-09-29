@@ -501,7 +501,7 @@ class TabManager: NSObject {
       tab.walletEthProviderScript = WKUserScript.create(source: providerJS,
                                                         injectionTime: .atDocumentStart,
                                                         forMainFrameOnly: true,
-                                                        in: .page)
+                                                        in: EthereumProviderScriptHandler.scriptSandbox)
     }
     if WalletDebugFlags.isSolanaDappsEnabled, let (provider, jsScripts) = makeWalletSolProvider?(tab) {
       tab.walletSolProvider = provider
