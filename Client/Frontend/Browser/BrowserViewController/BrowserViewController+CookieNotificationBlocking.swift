@@ -12,13 +12,18 @@ import Data
 extension BrowserViewController {
   func presentCookieNotificationBlockingCalloutIfNeeded() {
     // Don't show this if we already enabled the setting
-    guard !FilterListResourceDownloader.shared.isEnabled(filterListUUID: FilterListResourceDownloader.cookieConsentNoticesUUID) else { return }
+    guard !FilterListResourceDownloader.shared.isEnabled(for: FilterList.cookieConsentNoticesComponentID) else { return }
     // Don't show this if we are presenting another popup already
     guard !isOnboardingOrFullScreenCalloutPresented else { return }
     // We only show the popup on second launch
     guard !Preferences.General.isFirstLaunch.value else { return }
     // Ensure we successfully shown basic onboarding first
     guard Preferences.FullScreenCallout.omniboxCalloutCompleted.value else { return }
+    
+    #if DEBUG
+    // We reset this value on debug. If you don't want this popup to appear on debug, just enable the setting and it won't appear
+    FullScreenCalloutManager.enable(for: .blockCookieConsentNotices)
+    #endif
 
     // Make sure we didn't already show this popup
     guard presentedViewController == nil && FullScreenCalloutManager.shouldShowDefaultBrowserCallout(calloutType: .blockCookieConsentNotices) else {

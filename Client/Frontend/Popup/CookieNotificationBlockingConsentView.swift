@@ -9,9 +9,9 @@ import DesignSystem
 import BraveShared
 
 struct CookieNotificationBlockingConsentView: View {
-  public static let contentHeight: CGFloat = 480
-  private static let topSectionHeight: CGFloat = 328
-  private static let bottomSectionHeight = contentHeight - topSectionHeight
+  public static let contentHeight = 480.0
+  private static let gifHeight = 328.0
+  private static let bottomSectionHeight = contentHeight - gifHeight
   
   private let animation = Animation.easeOut(duration: 0.5).delay(0)
   private let transition = AnyTransition.scale(scale: 1.1).combined(with: .opacity)
@@ -21,13 +21,8 @@ struct CookieNotificationBlockingConsentView: View {
   @State private var showAnimation = false
   
   var body: some View {
-    VStack(spacing: 0) {
-      ZStack {
-        ZStack {
-          GIFImage(asset: "cookie-consent-animation", animate: showAnimation)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        
+    VStack {
+      VStack {
         if !showAnimation {
           VStack(alignment: .center, spacing: textPadding) {
             Text(Strings.blockCookieConsentNoticesPopupTitle)
@@ -43,11 +38,14 @@ struct CookieNotificationBlockingConsentView: View {
               .transition(transition)
               .padding(.horizontal, textPadding)
           }
-          .padding(.top, 80)
-          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
       }
-      .frame(height: Self.topSectionHeight, alignment: Alignment.center)
+      .padding(.top, 80)
+      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+      .background(
+        GIFImage(asset: "cookie-consent-animation", animate: showAnimation)
+          .frame(height: Self.gifHeight, alignment: Alignment.center)
+      )
       
       VStack(alignment: .center, spacing: textPadding) {
         if !showAnimation {
@@ -56,7 +54,7 @@ struct CookieNotificationBlockingConsentView: View {
               self.showAnimation = true
             }
 
-            if !FilterListResourceDownloader.shared.enableFilterList(forFilterListUUID: FilterListResourceDownloader.cookieConsentNoticesUUID, isEnabled: true) {
+            if !FilterListResourceDownloader.shared.enableFilterList(for: FilterList.cookieConsentNoticesComponentID, isEnabled: true) {
               assertionFailure("This filter list should exist or this UI is completely useless")
             }
             
@@ -87,7 +85,6 @@ struct CookieNotificationBlockingConsentView: View {
       alignment: .bottomLeading
     )
     .background(Color(UIColor.braveBackground))
-    .padding(0)
   }
 }
 
