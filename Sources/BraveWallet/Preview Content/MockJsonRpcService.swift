@@ -151,6 +151,10 @@ class MockJsonRpcService: BraveWalletJsonRpcService {
   func knownNetworks(_ coin: BraveWallet.CoinType, completion: @escaping ([String]) -> Void) {
     completion([])
   }
+  
+  func ensGetEthAddr(_ domain: String, options: BraveWallet.EnsOffchainLookupOptions?, completion: @escaping (String, Bool, BraveWallet.ProviderError, String) -> Void) {
+    completion("", false, .internalError, "")
+  }
 }
 
 extension BraveWallet.NetworkInfo {
