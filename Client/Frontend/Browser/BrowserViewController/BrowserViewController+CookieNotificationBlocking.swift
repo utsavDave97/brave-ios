@@ -19,11 +19,6 @@ extension BrowserViewController {
     guard !Preferences.General.isFirstLaunch.value else { return }
     // Ensure we successfully shown basic onboarding first
     guard Preferences.FullScreenCallout.omniboxCalloutCompleted.value else { return }
-    
-    #if DEBUG
-    // We reset this value on debug. If you don't want this popup to appear on debug, just enable the setting and it won't appear
-    FullScreenCalloutManager.enable(for: .blockCookieConsentNotices)
-    #endif
 
     // Make sure we didn't already show this popup
     guard presentedViewController == nil && FullScreenCalloutManager.shouldShowDefaultBrowserCallout(calloutType: .blockCookieConsentNotices) else {
