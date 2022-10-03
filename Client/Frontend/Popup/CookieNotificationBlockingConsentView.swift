@@ -10,6 +10,7 @@ import BraveShared
 
 struct CookieNotificationBlockingConsentView: View {
   public static let contentHeight = 480.0
+  public static let contentWidth = 344.0
   private static let gifHeight = 328.0
   private static let bottomSectionHeight = contentHeight - gifHeight
   
@@ -20,66 +21,75 @@ struct CookieNotificationBlockingConsentView: View {
   @Environment(\.presentationMode) var presentationMode
   @State private var showAnimation = false
   
-  var body: some View {
-    VStack {
-      VStack {
-        if !showAnimation {
-          VStack(alignment: .center, spacing: textPadding) {
-            Text(Strings.blockCookieConsentNoticesPopupTitle)
-              .font(.title)
-              .foregroundColor(Color(UIColor.braveLabel))
-              .multilineTextAlignment(.center)
-              .transition(transition)
-              .padding(.horizontal, textPadding)
-            Text(Strings.blockCookieConsentNoticesPopupDescription)
-              .font(.body)
-              .foregroundColor(Color(UIColor.braveLabel))
-              .multilineTextAlignment(.center)
-              .transition(transition)
-              .padding(.horizontal, textPadding)
-          }
-        }
+  private var yesButton: some View {
+    Button(Strings.yesBlockCookieConsentNotices) {
+      withAnimation(animation) {
+        self.showAnimation = true
       }
-      .padding(.top, 80)
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-      .background(
-        GIFImage(asset: "cookie-consent-animation", animate: showAnimation)
-          .frame(height: Self.gifHeight, alignment: Alignment.center)
-      )
+
+      if !FilterListResourceDownloader.shared.enableFilterList(for: FilterList.cookieConsentNoticesComponentID, isEnabled: true) {
+        assertionFailure("This filter list should exist or this UI is completely useless")
+      }
       
-      VStack(alignment: .center, spacing: textPadding) {
-        if !showAnimation {
-          Button(Strings.yesBlockCookieConsentNotices) {
-            withAnimation(animation) {
-              self.showAnimation = true
-            }
-
-            if !FilterListResourceDownloader.shared.enableFilterList(for: FilterList.cookieConsentNoticesComponentID, isEnabled: true) {
-              assertionFailure("This filter list should exist or this UI is completely useless")
-            }
-            
-            Task {
-              try await Task.sleep(seconds: 3.5)
-              self.presentationMode.wrappedValue.dismiss()
-            }
-          }
-          .buttonStyle(BraveFilledButtonStyle(size: .large))
-          .multilineTextAlignment(.center)
-          .transition(transition)
-          .padding(.horizontal, textPadding)
-
-          Button(Strings.noThanks) {
-            self.presentationMode.wrappedValue.dismiss()
-          }
-          .font(Font.body.weight(.semibold))
-          .foregroundColor(.accentColor)
-          .multilineTextAlignment(.center)
-          .transition(transition)
-          .padding(.horizontal, textPadding)
-        }
+      Task { @MainActor in
+        try await Task.sleep(seconds: 3.5)
+        self.presentationMode.wrappedValue.dismiss()
       }
-      .frame(height: Self.bottomSectionHeight, alignment: .center)
     }
+    .buttonStyle(BraveFilledButtonStyle(size: .large))
+    .multilineTextAlignment(.center)
+    .transition(transition)
+  }
+  
+  private var noButton: some View {
+    Button(Strings.noThanks) {
+      self.presentationMode.wrappedValue.dismiss()
+    }
+    .font(Font.body.weight(.semibold))
+    .foregroundColor(.accentColor)
+    .multilineTextAlignment(.center)
+    .transition(transition)
+  }
+  
+  var body: some View {
+    ScrollView {
+      VStack {
+        VStack {
+          if !showAnimation {
+            VStack(alignment: .center, spacing: textPadding) {
+              Text(Strings.blockCookieConsentNoticesPopupTitle)
+                .font(.title)
+                .foregroundColor(Color(UIColor.braveLabel))
+                .multilineTextAlignment(.center)
+              
+              Text(Strings.blockCookieConsentNoticesPopupDescription)
+                .font(.body)
+                .foregroundColor(Color(UIColor.braveLabel))
+                .multilineTextAlignment(.center)
+            }
+            .transition(transition)
+            .padding(textPadding)
+            .padding(.top, 80)
+          }
+        }
+        .frame(width: Self.contentWidth, alignment: .center)
+        .frame(minHeight: Self.gifHeight)
+        .background(
+          GIFImage(asset: "cookie-consent-animation", animate: showAnimation)
+            .frame(width: Self.contentWidth, height: Self.gifHeight, alignment: .top),
+          alignment: .top
+        )
+        
+        VStack(alignment: .center, spacing: textPadding) {
+          if !showAnimation {
+            yesButton
+            noButton
+          }
+        }
+        .padding(textPadding)
+      }
+    }
+    .frame(width: Self.contentWidth, height: Self.contentHeight, alignment: .center)
     .background(
       Image("cookie-consent-background", bundle: .current),
       alignment: .bottomLeading

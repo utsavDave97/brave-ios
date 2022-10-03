@@ -39,7 +39,10 @@ extension BrowserViewController {
 class CookieNotificationBlockingConsentViewController: UIHostingController<CookieNotificationBlockingConsentView>, PopoverContentComponent {
   init() {
     super.init(rootView: CookieNotificationBlockingConsentView())
-    self.preferredContentSize = CGSize(width: 344, height: CookieNotificationBlockingConsentView.contentHeight)
+    self.preferredContentSize = CGSize(
+      width: CookieNotificationBlockingConsentView.contentWidth,
+      height: CookieNotificationBlockingConsentView.contentHeight
+    )
   }
 
   required init?(coder aDecoder: NSCoder) {
