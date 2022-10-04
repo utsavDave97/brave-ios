@@ -25,7 +25,9 @@ extension BrowserViewController {
       return
     }
     
-    let popover = PopoverController(contentController: CookieNotificationBlockingConsentViewController(), contentSizeBehavior: .preferredContentSize)
+    let popover = PopoverController(
+      contentController: CookieNotificationBlockingConsentViewController(),
+      contentSizeBehavior: .preferredContentSize)
     popover.addsConvenientDismissalMargins = false
     popover.present(from: topToolbar.locationView.shieldsButton, on: self)
   }
@@ -34,10 +36,15 @@ extension BrowserViewController {
 class CookieNotificationBlockingConsentViewController: UIHostingController<CookieNotificationBlockingConsentView>, PopoverContentComponent {
   init() {
     super.init(rootView: CookieNotificationBlockingConsentView())
+    
     self.preferredContentSize = CGSize(
       width: CookieNotificationBlockingConsentView.contentWidth,
       height: CookieNotificationBlockingConsentView.contentHeight
     )
+    
+    self.rootView.onDismiss = { [weak self] in
+      self?.dismiss(animated: true)
+    }
   }
 
   required init?(coder aDecoder: NSCoder) {
