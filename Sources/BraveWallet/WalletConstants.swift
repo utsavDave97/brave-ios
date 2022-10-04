@@ -21,10 +21,7 @@ struct WalletConstants {
 
   /// The currently supported test networks.
   static let supportedTestNetworkChainIds = [
-    BraveWallet.RinkebyChainId,
-    BraveWallet.RopstenChainId,
     BraveWallet.GoerliChainId,
-    BraveWallet.KovanChainId,
     BraveWallet.LocalhostChainId,
     BraveWallet.SolanaDevnet,
     BraveWallet.SolanaTestnet,
