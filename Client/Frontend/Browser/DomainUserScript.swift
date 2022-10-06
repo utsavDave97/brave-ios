@@ -15,7 +15,6 @@ enum DomainUserScript: CaseIterable {
   case braveTalkHelper
   case braveSkus
   case bravePlaylistFolderSharingHelper
-  case youtubeAdblock
 
   /// Initialize this script with a URL
   init?(for url: URL) {
@@ -34,15 +33,6 @@ enum DomainUserScript: CaseIterable {
     return nil
   }
 
-  /// Returns a shield type for a given user script domain.
-  /// Returns nil if the domain's user script can't be turned off via a shield toggle. (i.e. it's always enabled)
-  var shieldType: BraveShield? {
-    switch self {
-    case .braveSearchHelper, .braveTalkHelper, .bravePlaylistFolderSharingHelper, .braveSkus, .youtubeAdblock:
-      return nil
-    }
-  }
-
   /// The domains associated with this script.
   var associatedDomains: Set<String> {
     switch self {
@@ -59,8 +49,24 @@ enum DomainUserScript: CaseIterable {
       return Set(["account.brave.com",
                    "account.bravesoftware.com",
                    "account.brave.software"])
-    case .youtubeAdblock:
-      return Set(["youtube.com"])
     }
+  }
+  
+  var fileName: String {
+    switch self {
+    case .braveSearchHelper: return "BraveSearchScript"
+    case .braveTalkHelper: return "BraveTalkScript"
+    case .bravePlaylistFolderSharingHelper: return "PlaylistFolderSharingScript"
+    case .braveSkus: return "BraveSkusScript"
+    }
+  }
+
+  func loadScript() throws -> String {
+    guard let path = Bundle.current.path(forResource: fileName, ofType: "js") else {
+      assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
+      throw ScriptLoadFailure.notFound
+    }
+
+    return try String(contentsOfFile: path)
   }
 }

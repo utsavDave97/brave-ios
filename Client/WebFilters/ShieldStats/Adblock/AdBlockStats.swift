@@ -101,21 +101,23 @@ public class AdBlockStats {
     self.clearCaches()
   }
   
-  func makeEngineScriptSouces(for url: URL) throws -> [String] {
-    return try engines.flatMap { engine -> [String] in
-      var results: [String] = []
+  func makeEngineScriptSouces(for url: URL) throws -> (cssInjectScripts: [String], generalScripts: [String]) {
+    var cssInjectScripts: [String] = []
+    var generalScripts: [String] = []
+    
+    try engines.forEach { engine in
       let sources = try engine.makeEngineScriptSources(for: url)
       
       if let source = sources.cssInjectScript {
-        results.append(source)
+        cssInjectScripts.append(source)
       }
       
       if let source = sources.generalScript {
-        results.append(source)
+        generalScripts.append(source)
       }
-      
-      return results
     }
+    
+    return (cssInjectScripts, generalScripts)
   }
 }
 

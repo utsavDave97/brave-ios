@@ -64,8 +64,6 @@ class ScriptFactory {
       return script
     }
     
-    var source = try makeScriptSource(of: domainType.sourceType)
-    
     switch domainType {
     case .siteStateListener:
       guard let script = SiteStateListenerScriptHandler.userScript else {
@@ -76,13 +74,15 @@ class ScriptFactory {
       return script
       
     case .farblingProtection(let etld):
+      var source = try makeScriptSource(of: .farblingProtection)
       let randomConfiguration = RandomConfiguration(etld: etld)
       let fakeParams = try FarblingProtectionHelper.makeFarblingParams(from: randomConfiguration)
       source = source.replacingOccurrences(of: "$<farbling_protection_args>", with: fakeParams)
+      return WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false, in: .page)
       
     case .nacl:
-      // No modifications needed
-      break
+      let source = try makeScriptSource(of: .nacl)
+      return WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false, in: .page)
       
     case .domainUserScript(let domainUserScript):
       switch domainUserScript {
@@ -117,15 +117,11 @@ class ScriptFactory {
         }
         cachedDomainScriptsSources[domainType] = script
         return script
-        
-      case .youtubeAdblock:
-        // No modifications needed
-        break
       }
+    case .engineScript(_, let source, _):
+      let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: true, in: .page)
+      cachedDomainScriptsSources[domainType] = script
+      return script
     }
-    
-    let userScript = WKUserScript.create(source: source, injectionTime: domainType.injectionTime, forMainFrameOnly: domainType.forMainFrameOnly, in: domainType.contentWorld)
-    cachedDomainScriptsSources[domainType] = userScript
-    return userScript
   }
 }
