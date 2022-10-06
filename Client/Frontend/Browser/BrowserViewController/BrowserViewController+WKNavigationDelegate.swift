@@ -272,9 +272,13 @@ extension BrowserViewController: WKNavigationDelegate {
     }
 
     // Check if custom user scripts must be added to or removed from the web view.
-    var scripts = UserScriptHelper.getUserScriptTypes(
+    let scripts = UserScriptHelper.getUserScriptTypes(
       for: navigationAction, options: isPrivateBrowsing ? .privateBrowsing : .default
     )
+    
+    // TODO: Convert this to `UserScriptManagerType` so we can inject all scripts at once.
+    // IE: De-Amp, RequestBlocking + These.
+    tab?.setCustomUserScript(scripts: scripts)
     
     // Load engine scripts for this request and add it to the tab
     // We can't execute them yet because the page is not yet ready
@@ -283,31 +287,25 @@ extension BrowserViewController: WKNavigationDelegate {
     // They will be executed on `SiteStateListenerContentHelper`
     // which will inform us of a frame load
     if let frameInfo = navigationAction.targetFrame {
-      var evaluations: [Tab.FrameEvaluation] = []
-      
-      for (index, engine) in AdBlockStats.shared.engines.enumerated() {
-        do {
-          let sources = try engine.makeEngineScriptSources(for: url)
-          
-          if let source = sources.cssInjectScript {
-            evaluations.append(Tab.FrameEvaluation(frameInfo: frameInfo, source: source))
-          }
-          
-          // Main frame scripts will be injected so we only add sub-frame evaluations
-          if let source = sources.generalScript, !frameInfo.isMainFrame {
-            evaluations.append(Tab.FrameEvaluation(frameInfo: frameInfo, source: source))
-          }
-        } catch {
-          assertionFailure()
+      do {
+        let sources = try AdBlockStats.shared.makeEngineScriptSouces(for: url)
+        
+        var evaluations: [Tab.FrameEvaluation] = sources.cssInjectScripts.map { source in
+          return Tab.FrameEvaluation(frameInfo: frameInfo, source: source)
         }
+        
+        // We add general scripts only from non-main frames. Main frame scripts will be injected rather than executed
+        if !frameInfo.isMainFrame {
+          evaluations.append(contentsOf: sources.generalScripts.map({ source in
+            return Tab.FrameEvaluation(frameInfo: frameInfo, source: source)
+          }))
+        }
+        
+        tab?.frameEvaluations[url] = evaluations
+      } catch {
+        assertionFailure()
       }
-      
-      tab?.frameEvaluations[url] = evaluations
     }
-    
-    // TODO: Convert this to `UserScriptManagerType` so we can inject all scripts at once.
-    // IE: De-Amp, RequestBlocking + These.
-    tab?.setCustomUserScript(scripts: scripts)
 
     // Brave Search logic.
 

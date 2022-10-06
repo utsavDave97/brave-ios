@@ -42,8 +42,10 @@ struct CosmeticFilterModel: Codable {
 
 public class AdBlockStats {
   public static let shared = AdBlockStats()
-
-  fileprivate var fifoCacheOfUrlsChecked = FifoDict<Bool>()
+  typealias ScriptSources = (cssInjectScripts: [String], generalScripts: [String])
+  
+  private var fifoCacheOfUrlsChecked = FifoDict<String, Bool>()
+  private var cachedScriptSources = FifoDict<URL, ScriptSources>()
 
   // Adblock engine for general adblock lists.
   private(set) var engines: [AdblockEngine]
@@ -58,7 +60,8 @@ public class AdBlockStats {
   static let adblockSerialQueue = DispatchQueue(label: "com.brave.adblock-dispatch-queue")
   
   func clearCaches() {
-    fifoCacheOfUrlsChecked = FifoDict<Bool>()
+    fifoCacheOfUrlsChecked = FifoDict()
+    cachedScriptSources = FifoDict()
   }
   
   /// Checks the general and regional engines to see if the request should be blocked.
@@ -101,7 +104,11 @@ public class AdBlockStats {
     self.clearCaches()
   }
   
-  func makeEngineScriptSouces(for url: URL) throws -> (cssInjectScripts: [String], generalScripts: [String]) {
+  func makeEngineScriptSouces(for url: URL) throws -> ScriptSources {
+    if let result = cachedScriptSources.getElement(url) {
+      return result
+    }
+    
     var cssInjectScripts: [String] = []
     var generalScripts: [String] = []
     
@@ -117,11 +124,13 @@ public class AdBlockStats {
       }
     }
     
-    return (cssInjectScripts, generalScripts)
+    let result = (cssInjectScripts, generalScripts)
+    cachedScriptSources.addElement(result, forKey: url)
+    return result
   }
 }
 
-extension AdblockEngine {
+private extension AdblockEngine {
   func makeEngineScriptSources(for url: URL) throws -> (cssInjectScript: String?, generalScript: String?) {
     let rules = cosmeticResourcesForURL(url.absoluteString)
     guard let data = rules.data(using: .utf8) else { return (nil, nil) }

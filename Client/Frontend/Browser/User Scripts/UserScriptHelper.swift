@@ -50,14 +50,14 @@ class UserScriptHelper {
       
       // For the main frame, we inject the engine script sources instead of executing them.
       // We should do the same for sub-frames but this is difficult to do.
-      for (index, engine) in AdBlockStats.shared.engines.enumerated() {
-        do {
-          let sources = try engine.makeEngineScriptSources(for: mainDocumentURL)
-          guard let generalScript = sources.generalScript else { continue }
-          userScriptTypes.insert(.engineScript(url: mainDocumentURL, source: generalScript, order: index))
-        } catch {
-          assertionFailure()
+      do {
+        let sources = try AdBlockStats.shared.makeEngineScriptSouces(for: mainDocumentURL)
+        
+        for (index, source) in sources.generalScripts.enumerated() {
+          userScriptTypes.insert(.engineScript(url: mainDocumentURL, source: source, order: index))
         }
+      } catch {
+        assertionFailure()
       }
 
       // Add the `farblingProtection` script if needed
