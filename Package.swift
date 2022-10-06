@@ -26,6 +26,7 @@ let package = Package(
     .library(name: "Strings", targets: ["Strings"]),
     .library(name: "BraveVPN", targets: ["BraveVPN"]),
     .library(name: "BraveNews", targets: ["BraveNews"]),
+    .library(name: "BraveTalk", targets: ["BraveTalk"]),
     .library(name: "RuntimeWarnings", targets: ["RuntimeWarnings"]),
     .plugin(name: "IntentBuilderPlugin", targets: ["IntentBuilderPlugin"]),
   ],
@@ -48,6 +49,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-markdown", revision: "4f0c76fcd29fea648915f41e2aa896d47608087a"),
     .package(url: "https://github.com/GuardianFirewall/GuardianConnect", exact: "1.7.2"),
     .package(name: "Static", path: "ThirdParty/Static"),
+    .package(name: "JitsiMeet", path: "ThirdParty/JitsiMeet"),
   ],
   targets: [
     .target(
@@ -78,6 +80,7 @@ let package = Package(
         "BraveVPN",
         "BraveNews",
         "CodableHelpers",
+        "BraveTalk",
         .product(name: "Lottie", package: "lottie-ios"),
         .product(name: "Collections", package: "swift-collections"),
       ],
@@ -379,6 +382,8 @@ let package = Package(
     ),
     .target(name: "Strings", path: "App/l10n", exclude: ["tools", "Resources/Info.plist", "README.md"]),
     .target(name: "RuntimeWarnings"),
+    .target(name: "BraveTalk", dependencies: ["Shared", "JitsiMeet"]),
+    .testTarget(name: "BraveTalkTests", dependencies: ["BraveTalk", "Shared"]),
     .plugin(name: "IntentBuilderPlugin", capability: .buildTool()),
   ],
   cxxLanguageStandard: .cxx17

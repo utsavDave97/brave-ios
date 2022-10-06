@@ -21,6 +21,7 @@ import Brave
 import BraveVPN
 import RuntimeWarnings
 import BraveNews
+import BraveTalk
 
 #if DEBUG
 import os
@@ -351,9 +352,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     DebouncingResourceDownloader.shared.startLoading()
 
+    BraveTalkJitsiCoordinator.sendAppLifetimeEvent(
+      .didFinishLaunching(options: launchOptions ?? [:])
+    )
+    
     return shouldPerformAdditionalDelegateHandling
   }
 
+  func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    return BraveTalkJitsiCoordinator.sendAppLifetimeEvent(.continueUserActivity(userActivity, restorationHandler: restorationHandler))
+  }
+  
+  func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    return BraveTalkJitsiCoordinator.sendAppLifetimeEvent(.openURL(url, options: options))
+  }
+  
   func applicationWillTerminate(_ application: UIApplication) {
     // We have only five seconds here, so let's hope this doesn't take too long.
     sceneInfo?.profile.shutdown()

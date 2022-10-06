@@ -24,6 +24,7 @@ import class Combine.AnyCancellable
 import BraveWallet
 import BraveVPN
 import BraveNews
+import BraveTalk
 
 private let log = Logger.browserLogger
 
@@ -186,6 +187,9 @@ public class BrowserViewController: UIViewController {
   private(set) var widgetBookmarksFRC: NSFetchedResultsController<Favorite>?
   var widgetFaviconFetchers: [FaviconFetcher] = []
   let deviceCheckClient: DeviceCheckClient?
+  
+  // Brave Talk native implementations
+  let braveTalkJitsiCoordinator = BraveTalkJitsiCoordinator()
 
   /// The currently open WalletStore
   weak var walletStore: WalletStore?
@@ -367,6 +371,7 @@ public class BrowserViewController: UIViewController {
           self.updateDisplayedPopoverProperties?()
           self.present(popover, animated: true, completion: nil)
         }
+        self.braveTalkJitsiCoordinator.resetPictureInPictureBounds(.init(size: size))
       },
       completion: { _ in
         if let tab = self.tabManager.selectedTab {
@@ -1014,6 +1019,7 @@ public class BrowserViewController: UIViewController {
       make.top.left.right.equalTo(self.view)
       make.bottom.equalTo(view.safeArea.top)
     }
+    
     toolbarVisibilityViewModel.transitionDistance = header.expandedBarStackView.bounds.height - header.collapsedBarContainerView.bounds.height
     // Since the height of the WKWebView changes while collapsing we need to use a stable value to determine
     // if the toolbars can collapse
@@ -2331,7 +2337,9 @@ extension BrowserViewController: TabDelegate {
       FocusScriptHandler(tab: tab),
       BraveGetUA(tab: tab),
       BraveSearchScriptHandler(tab: tab, profile: profile, rewards: rewards),
-      BraveTalkScriptHandler(tab: tab, rewards: rewards),
+      BraveTalkScriptHandler(tab: tab, rewards: rewards, launchNativeBraveTalk: { [weak self] tab, room, token in
+        self?.launchNativeBraveTalk(tab: tab, room: room, token: token)
+      }),
       BraveSkusScriptHandler(tab: tab),
       ResourceDownloadScriptHandler(tab: tab),
       DownloadContentScriptHandler(browserController: self, tab: tab),
