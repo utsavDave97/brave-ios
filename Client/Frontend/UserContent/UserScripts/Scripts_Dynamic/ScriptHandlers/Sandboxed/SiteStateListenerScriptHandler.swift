@@ -62,7 +62,7 @@ class SiteStateListenerScriptHandler: TabContentScript {
         return
       }
       
-      if let frameEvaluations = tab.frameEvaluations[frameURL] {
+      if let frameEvaluations = tab.currentPageData?.frameEvaluations[frameURL] {
         for frameEvaluation in frameEvaluations {
           webView.evaluateSafeJavaScript(
             functionName: frameEvaluation.source,
@@ -76,7 +76,7 @@ class SiteStateListenerScriptHandler: TabContentScript {
           )
         }
         
-        tab.frameEvaluations.removeValue(forKey: frameURL)
+        tab.currentPageData?.frameEvaluations.removeValue(forKey: frameURL)
       }
     } catch {
       assertionFailure("Invalid type of message. Fix the `Site.js` script")
