@@ -51,22 +51,4 @@ enum DomainUserScript: CaseIterable {
                    "account.brave.software"])
     }
   }
-  
-  var fileName: String {
-    switch self {
-    case .braveSearchHelper: return "BraveSearchScript"
-    case .braveTalkHelper: return "BraveTalkScript"
-    case .bravePlaylistFolderSharingHelper: return "PlaylistFolderSharingScript"
-    case .braveSkus: return "BraveSkusScript"
-    }
-  }
-
-  func loadScript() throws -> String {
-    guard let path = Bundle.current.path(forResource: fileName, ofType: "js") else {
-      assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
-      throw ScriptLoadFailure.notFound
-    }
-
-    return try String(contentsOfFile: path)
-  }
 }
