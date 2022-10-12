@@ -53,6 +53,43 @@ class ScriptFactory {
     }
   }
   
+  /// Create a script for the given domain user script
+  private func makeScript(for domainUserScript: DomainUserScript) throws -> WKUserScript {
+    switch domainUserScript {
+    case .braveSearchHelper:
+      guard let script = BraveSearchScriptHandler.userScript else {
+        assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
+        throw ScriptLoadFailure.notFound
+      }
+      
+      return script
+      
+    case .braveTalkHelper:
+      guard let script = BraveTalkScriptHandler.userScript else {
+        assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
+        throw ScriptLoadFailure.notFound
+      }
+      
+      return script
+      
+    case .braveSkus:
+      guard let script = BraveSkusScriptHandler.userScript else {
+        assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
+        throw ScriptLoadFailure.notFound
+      }
+      
+      return script
+      
+    case .bravePlaylistFolderSharingHelper:
+      guard let script = PlaylistFolderSharingScriptHandler.userScript else {
+        assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
+        throw ScriptLoadFailure.notFound
+      }
+      
+      return script
+    }
+  }
+  
   /// Get a script for the `UserScriptType`.
   ///
   /// Scripts can be cached on two levels:
@@ -64,64 +101,36 @@ class ScriptFactory {
       return script
     }
     
+    let resultingScript: WKUserScript
+    
     switch domainType {
     case .siteStateListener:
       guard let script = SiteStateListenerScriptHandler.userScript else {
         assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
         throw ScriptLoadFailure.notFound
       }
-      cachedDomainScriptsSources[domainType] = script
-      return script
+      
+      resultingScript = script
       
     case .farblingProtection(let etld):
       var source = try makeScriptSource(of: .farblingProtection)
       let randomConfiguration = RandomConfiguration(etld: etld)
       let fakeParams = try FarblingProtectionHelper.makeFarblingParams(from: randomConfiguration)
       source = source.replacingOccurrences(of: "$<farbling_protection_args>", with: fakeParams)
-      return WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false, in: .page)
+      resultingScript = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false, in: .page)
       
     case .nacl:
       let source = try makeScriptSource(of: .nacl)
-      return WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false, in: .page)
+      resultingScript = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false, in: .page)
       
     case .domainUserScript(let domainUserScript):
-      switch domainUserScript {
-      case .braveSearchHelper:
-        guard let script = BraveSearchScriptHandler.userScript else {
-          assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
-          throw ScriptLoadFailure.notFound
-        }
-        cachedDomainScriptsSources[domainType] = script
-        return script
-        
-      case .braveTalkHelper:
-        guard let script = BraveTalkScriptHandler.userScript else {
-          assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
-          throw ScriptLoadFailure.notFound
-        }
-        cachedDomainScriptsSources[domainType] = script
-        return script
-        
-      case .braveSkus:
-        guard let script = BraveSkusScriptHandler.userScript else {
-          assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
-          throw ScriptLoadFailure.notFound
-        }
-        cachedDomainScriptsSources[domainType] = script
-        return script
-        
-      case .bravePlaylistFolderSharingHelper:
-        guard let script = PlaylistFolderSharingScriptHandler.userScript else {
-          assertionFailure("Cannot load script. This should not happen as it's part of the codebase")
-          throw ScriptLoadFailure.notFound
-        }
-        cachedDomainScriptsSources[domainType] = script
-        return script
-      }
+      resultingScript = try self.makeScript(for: domainUserScript)
+      
     case .engineScript(_, let source, _):
-      let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: true, in: .page)
-      cachedDomainScriptsSources[domainType] = script
-      return script
+      resultingScript = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: true, in: .page)
     }
+    
+    cachedDomainScriptsSources[domainType] = resultingScript
+    return resultingScript
   }
 }
