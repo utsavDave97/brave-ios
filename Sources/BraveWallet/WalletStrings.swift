@@ -2794,5 +2794,12 @@ extension Strings {
       value: "Sign All Transactions",
       comment: "The title of the view shown over a dapps website that requests the user sign all displayed transactions."
     )
+    public static let solanaDappTransactionTitle = NSLocalizedString(
+      "wallet.solanaDappTransactionTitle",
+      tableName: "BraveWallet",
+      bundle: .strings,
+      value: "Approve Transaction",
+      comment: "The title displayed above the value of a Solana dapp transaction in transaction confirmation view, transaction details view and transaction summary rows."
+    )
   }
 }

@@ -152,8 +152,8 @@ extension TransactionParser {
         txInfo: transaction,
         namedFromAddress: parsedTransaction.namedFromAddress,
         namedToAddress: parsedTransaction.namedToAddress,
-        title: "",
-        gasFee: nil,
+        title: "Solana Dapp Transaction",
+        gasFee: parsedTransaction.gasFee,
         networkSymbol: parsedTransaction.networkSymbol
       )
     case .other:
